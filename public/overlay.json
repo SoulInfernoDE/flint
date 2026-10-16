@@ -1,0 +1,24 @@
+{
+  "id": "io.github.soulinfernode.flint",
+  "version": "0.1.0",
+  "name": "Flint",
+  "description": "mod-description",
+  "author": "SoulInfernoDE and contributors",
+  "license": "GPL-3.0-or-later",
+  "source": "https://github.com/SoulInfernoDE/flint",
+  "games": ["hearthstone"],
+  "permissions": ["game.state", "game.events", "storage"],
+  "network": ["api.hearthstonejson.com", "art.hearthstonejson.com"],
+  "windows": {
+    "battlegrounds": {
+      "kind": "overlay",
+      "entry": "index.html",
+      "width": 270,
+      "height": 600,
+      "position": { "x": 1310, "y": 120 }
+    }
+  },
+  "settings": [
+    { "id": "show-board", "label": "setting-show-board", "type": "boolean", "default": true }
+  ]
+}

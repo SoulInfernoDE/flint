@@ -1,0 +1,5 @@
+node_modules/
+dist/
+overlay/
+package-lock.json
+*.md

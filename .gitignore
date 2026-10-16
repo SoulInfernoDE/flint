@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.idea/
+.vscode/*
+*.swp
+.DS_Store
+# Entity dumps of real games may contain player names.
+entities*.json

@@ -1,0 +1,14 @@
+# Changelog
+
+> English original. German version: [CHANGELOG.de.md](CHANGELOG.de.md)
+
+All notable changes are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
+
+## [Unreleased]
+
+### Added
+
+- Battlegrounds panel: lobby by leaderboard place with tavern tier, health and armor, eliminated players, you, your next opponent and the current combat; last seen board of an opponent on hover; your board; tavern tier and gold
+- Card names in the game's language and hero images from HearthstoneJSON, cached for 24 hours in overLay's mod storage
+- English and German translations
+- Logos (CC BY-SA 4.0)

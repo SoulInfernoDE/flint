@@ -1,0 +1,37 @@
+{
+  "name": "flint",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Flint: Hearthstone companion mod for overLay, Battlegrounds first",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "workspaces": [
+    "overlay/sdk"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "check": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@overlay/sdk": "0.1.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@tsconfig/svelte": "5.0.8",
+    "@types/node": "26.6.5",
+    "prettier": "3.9.10",
+    "prettier-plugin-svelte": "4.1.1",
+    "svelte": "5.57.2",
+    "svelte-check": "4.7.7",
+    "typescript": "6.0.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  }
+}

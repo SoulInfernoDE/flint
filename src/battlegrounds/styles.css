@@ -1,0 +1,239 @@
+/* Flint: dark violet with gold accents, in the spirit of Firestone (own design). */
+:root {
+  color-scheme: dark;
+  --surface: rgb(20 14 32 / 0.93);
+  --row: linear-gradient(90deg, rgb(48 34 74 / 0.95), rgb(30 22 46 / 0.95));
+  --border: #3d2a5c;
+  --text: #ece6f6;
+  --muted: #9d92b3;
+  --gold: #f2c94c;
+  --accent: #ff9f43;
+  --danger: #e5484d;
+  --you: #2ed3b7;
+}
+
+html,
+body {
+  margin: 0;
+  background: transparent;
+  color: var(--text);
+  font:
+    12px/1.35 'Inter',
+    'Segoe UI',
+    'Noto Sans',
+    system-ui,
+    sans-serif;
+  user-select: none;
+}
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
+  overflow: hidden;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, rgb(66 40 98), rgb(36 24 56));
+  cursor: grab;
+}
+
+.logo {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.title {
+  flex: 1;
+  font-weight: 700;
+}
+
+.tavern {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.gold {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+h2 {
+  margin: 8px 8px 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h3 {
+  margin: 0 0 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.note {
+  margin: 4px 8px;
+  color: var(--muted);
+}
+
+ol,
+ul {
+  margin: 0;
+  padding: 0 4px;
+  list-style: none;
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  margin: 2px 0;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--row);
+  border-left: 3px solid transparent;
+  overflow: hidden;
+}
+
+.hero .tile {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  opacity: 0.35;
+  mask-image: linear-gradient(90deg, transparent, black 60%);
+  pointer-events: none;
+}
+
+.hero > :not(.tile) {
+  position: relative;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Only the name gives way when a row gets crowded. */
+.hero > .name {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.hero.me {
+  border-left-color: var(--you);
+}
+
+.hero.next {
+  border-left-color: var(--accent);
+}
+
+.hero.combat {
+  border-left-color: var(--danger);
+}
+
+.hero.dead {
+  opacity: 0.45;
+}
+
+.place {
+  width: 14px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.name {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tier {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgb(255 159 67 / 0.2);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.health {
+  min-width: 34px;
+  text-align: right;
+  font-weight: 700;
+}
+
+.health small {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.tag {
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.tag.you {
+  background: rgb(46 211 183 / 0.2);
+  color: var(--you);
+}
+
+.tag.nextup {
+  background: rgb(255 159 67 / 0.2);
+  color: var(--accent);
+}
+
+.tag.fight {
+  background: rgb(229 72 77 / 0.25);
+  color: var(--danger);
+}
+
+.last-board {
+  margin: 0 0 4px 18px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: rgb(10 6 18 / 0.85);
+}
+
+.last-board li,
+.board li {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 1px 0;
+}
+
+.board {
+  padding-bottom: 6px;
+}
+
+.board li {
+  height: 22px;
+  padding: 0 6px;
+  margin: 2px 0;
+  border-radius: 4px;
+  background: var(--row);
+}
+
+.board li.golden {
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+.stats {
+  min-width: 34px;
+  font-weight: 700;
+  color: var(--gold);
+}

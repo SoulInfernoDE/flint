@@ -9,9 +9,9 @@ import { compact, hsLocale, toMap, type CardDb, type Compact, type RawCard } fro
 
 export { hsLocale, tileUrl, type CardDb, type CardInfo } from './card-data';
 
-const CACHE_KEY = 'cards-v2';
+const CACHE_KEY = 'cards-v3';
 /** Caches of earlier Flint versions, removed to free storage. */
-const OLD_CACHE_KEYS = ['cards-v1'];
+const OLD_CACHE_KEYS = ['cards-v1', 'cards-v2'];
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 interface Cached {

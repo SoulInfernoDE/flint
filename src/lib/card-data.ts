@@ -13,7 +13,26 @@ export interface CardInfo {
   pool: boolean;
   /** Only in the Duos pool. */
   duosOnly: boolean;
+  /** Keywords of pool minions that the minion list can filter by (see MECHANICS). */
+  mechanics: string[];
 }
+
+/** Keywords of pool minions offered as filters, in display order. */
+export const MECHANICS = [
+  'BATTLECRY',
+  'DEATHRATTLE',
+  'BACON_RALLY',
+  'START_OF_COMBAT',
+  'END_OF_TURN_TRIGGER',
+  'AVENGE',
+  'BACON_SPELLCRAFT_ID',
+  'DIVINE_SHIELD',
+  'TAUNT',
+  'REBORN',
+  'WINDFURY',
+  'VENOMOUS',
+  'MAGNETIC',
+];
 
 export type CardDb = ReadonlyMap<string, CardInfo>;
 
@@ -47,6 +66,7 @@ export type Compact = [
   flags: number,
   /** Id of the golden version of a pool minion. */
   golden: string | null,
+  mechanics: string[],
 ];
 
 export interface RawCard {
@@ -55,6 +75,7 @@ export interface RawCard {
   name?: string;
   attack?: number;
   health?: number;
+  mechanics?: string[];
   isBattlegroundsPoolMinion?: boolean;
   isBattlegroundsDuosExclusive?: boolean;
   battlegroundsPremiumDbfId?: number;
@@ -79,7 +100,7 @@ function isBattlegroundsCard(card: RawCard): boolean {
 
 export function toMap(cards: Compact[]): CardDb {
   const map = new Map<string, CardInfo>();
-  for (const [id, name, type, tier, races, attack, health, flags] of cards) {
+  for (const [id, name, type, tier, races, attack, health, flags, , mechanics] of cards) {
     map.set(id, {
       id,
       name,
@@ -90,6 +111,7 @@ export function toMap(cards: Compact[]): CardDb {
       health,
       pool: (flags & POOL) !== 0,
       duosOnly: (flags & DUOS_ONLY) !== 0,
+      mechanics: mechanics ?? [],
     });
   }
   // Golden minions count as their normal one (same name and tribes, doubled stats).
@@ -117,6 +139,7 @@ export function compact(raw: RawCard[]): Compact[] {
         c.health ?? null,
         (c.isBattlegroundsPoolMinion ? POOL : 0) | (c.isBattlegroundsDuosExclusive ? DUOS_ONLY : 0),
         c.isBattlegroundsPoolMinion ? (byDbf.get(c.battlegroundsPremiumDbfId) ?? null) : null,
+        c.isBattlegroundsPoolMinion ? (c.mechanics ?? []).filter((m) => MECHANICS.includes(m)) : [],
       ])
   );
 }

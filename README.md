@@ -24,7 +24,7 @@ Battlegrounds panel in the game:
 - **Your board:** minions with attack/health and tier, golden minions marked
 - **Tavern tier and gold** (including temporary gold)
 - **Tribes of the lobby:** confirmed from the minions you see; once all five are known, the banned ones are shown too
-- **Minions by tier:** a bar with the tavern tiers; click one to list the minions this lobby can offer, by tribe, with stats
+- **Minions by tier:** a bar with the tavern tiers; click one to list the minions this lobby can offer, by tribe, with stats; filter by keyword (Battlecry, Deathrattle, Divine Shield …)
 - **Session recap:** games, average placement and top 4 finishes of the current session in the panel; the full history (hero, placement, tavern tier, tribes) on Flint's page in the overLay launcher, where you can also start a new session. A break of more than four hours starts one by itself
 
 Everything follows the game as you see it: combat results appear when the combat is shown, not before.

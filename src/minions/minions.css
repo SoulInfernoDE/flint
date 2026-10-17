@@ -100,3 +100,31 @@
   min-width: 0;
   text-align: right;
 }
+
+.mechanics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 0 8px 4px;
+}
+
+.mechanic {
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.mechanic:hover {
+  color: var(--text);
+}
+
+.mechanic.on {
+  border-color: var(--gold);
+  background: rgb(242 201 76 / 0.15);
+  color: var(--gold);
+}

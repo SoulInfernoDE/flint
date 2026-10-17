@@ -39,6 +39,23 @@ bg-tribe =
         [NEUTRAL] Neutral
        *[other] { $tribe }
     }
+bg-mechanic =
+    { $mechanic ->
+        [BATTLECRY] Kampfschrei
+        [DEATHRATTLE] Todesröcheln
+        [BACON_RALLY] Mobilisieren
+        [START_OF_COMBAT] Kampfbeginn
+        [END_OF_TURN_TRIGGER] Zugende
+        [AVENGE] Rache
+        [BACON_SPELLCRAFT_ID] Zauberkunde
+        [DIVINE_SHIELD] Gottesschild
+        [TAUNT] Spott
+        [REBORN] Wiederkehr
+        [WINDFURY] Windzorn
+        [VENOMOUS] Toxisch
+        [MAGNETIC] Magnetisch
+       *[other] { $mechanic }
+    }
 bg-minions = Diener nach Stufe
 bg-minions-count =
     { $count ->

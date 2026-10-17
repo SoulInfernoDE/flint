@@ -125,6 +125,6 @@
         {/each}
       </ul>
     {/if}
-    <CounterBar counters={flint.counters.opposing} />
+    <CounterBar counters={flint.counters.opposing} side="opposing" />
   </section>
 {/if}

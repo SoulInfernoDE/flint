@@ -78,6 +78,6 @@
         </li>
       {/each}
     </ul>
-    <CounterBar counters={flint.counters.friendly} />
+    <CounterBar counters={flint.counters.friendly} side="friendly" />
   </section>
 {/if}

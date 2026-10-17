@@ -15,7 +15,7 @@ Alle nennenswerten Änderungen werden hier festgehalten. Das Format folgt [Keep 
 - Filter nach Schlüsselwörtern in der Dienerliste (Kampfschrei, Todesröcheln, Mobilisieren, Gottesschild und weitere, benannt wie im Spiel)
 - Deck-Tracker für Partien mit Deck: die Liste des gewählten Decks (von overLay, aus Hearthstones `Decks.log`) mit verbleibenden Exemplaren, Ziehchancen und Deckgröße; bei Leihdecks die bisher gesehenen Karten
 - Gegner-Tracker: die Hand des Gegners mit dem Zug, in dem jede Karte hinzukam (Starthand, Münze, erschaffene und zurückgekehrte Karten) und den auf der Hand veränderten Karten, die gespielten Karten nach Zug und seine Deckgröße; startet er mitten in einer Partie, holt er sie nach
-- Zähler unter Deck- und Gegner-Tracker: Angriff auf dem Brett, nächster Erschöpfungsschaden, Leichen (Todesritter) und gespielte Zauber
+- Zähler unter Deck- und Gegner-Tracker: Angriff auf dem Brett, nächster Erschöpfungsschaden, Leichen (Todesritter), gespielte Zauber und ihre Zauberschulen sowie ein Zugtimer
 - Kartennamen in der Sprache des Spiels und Heldenbilder von HearthstoneJSON, 24 Stunden im Mod-Speicher von overLay zwischengespeichert
 - Übersetzungen auf Englisch und Deutsch
 - Logos (CC BY-SA 4.0)

@@ -120,4 +120,20 @@ counter-spells = { $count ->
         [one] 1 spell played
        *[other] { $count } spells played
     }
+counter-turn-title = Time in this turn
+counter-schools = { $count ->
+        [one] 1 spell school
+       *[other] { $count } spell schools
+    }
+spell-school =
+    { $school ->
+        [1] Arcane
+        [2] Fire
+        [3] Frost
+        [4] Nature
+        [5] Holy
+        [6] Shadow
+        [7] Fel
+       *[other] School { $school }
+    }
 setting-show-board = Show your board in the panel

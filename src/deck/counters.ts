@@ -12,7 +12,11 @@ export interface Counters {
   /** Corpses; null unless the player's hero is a Death Knight. */
   corpses: number | null;
   spellsPlayed: number;
+  /** Distinct spell schools among the spells played (Hearthstone's numbers, sorted). */
+  spellSchools: number[];
 }
+
+const PLAYED_SPELL_ZONES = new Set(['PLAY', 'GRAVEYARD', 'SECRET']);
 
 const num = (value: string | undefined): number => {
   const n = Number(value ?? 0);
@@ -28,9 +32,15 @@ export function counters(
   if (!player || !controller) return null;
   let boardAttack = 0;
   let inDeck = 0;
+  const schools = new Set<number>();
   for (const e of entities.values()) {
     if (e.tags.CONTROLLER !== controller) continue;
     if (e.tags.ZONE === 'DECK') inDeck += 1;
+    // Played spells: resolving (PLAY), done (GRAVEYARD), or secrets and quests (SECRET).
+    if (e.tags.CARDTYPE === 'SPELL' && PLAYED_SPELL_ZONES.has(e.tags.ZONE ?? '')) {
+      const school = num(e.tags.SPELL_SCHOOL);
+      if (school > 0) schools.add(school);
+    }
     if (e.tags.ZONE === 'PLAY' && e.tags.CARDTYPE === 'MINION') boardAttack += num(e.tags.ATK);
   }
   const hero = entities.get(Number(player.tags.HERO_ENTITY));
@@ -40,5 +50,6 @@ export function counters(
     nextFatigue: inDeck === 0 ? num(player.tags.FATIGUE) + 1 : null,
     corpses: hero?.tags.CLASS === 'DEATHKNIGHT' ? num(player.tags.CORPSES) : null,
     spellsPlayed: num(player.tags.NUM_SPELLS_PLAYED_THIS_GAME),
+    spellSchools: [...schools].sort((a, b) => a - b),
   };
 }

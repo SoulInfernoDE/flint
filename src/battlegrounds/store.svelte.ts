@@ -25,6 +25,8 @@ export const flint = $state<{
   opponent: OpponentState | null;
   /** Board attack, fatigue, corpses and spells of each side in a game with decks. */
   counters: { friendly: Counters | null; opposing: Counters | null };
+  /** Whose turn it is and when it began (local time); null until a turn starts live. */
+  turn: { side: Hearthstone.Side; startedAt: number } | null;
   /** Collectible cards; loaded the first time a game with a deck is seen. */
   collectible: CollectibleDb | null;
   cards: CardDb;
@@ -42,6 +44,7 @@ export const flint = $state<{
   deck: null,
   opponent: null,
   counters: { friendly: null, opposing: null },
+  turn: null,
   collectible: null,
   cards: new Map(),
   cardsError: null,
@@ -218,6 +221,12 @@ export async function start(
     if (event.name === 'game-created') {
       lastBoards.clear();
       lastTribes = [];
+      flint.turn = null;
+    }
+    // Live only: the history has no times, so a window that catches up starts the
+    // timer with the next turn.
+    if (event.name === 'turn-start') {
+      flint.turn = { side: event.data.side, startedAt: Date.now() };
     }
     if (event.name === 'game-end' && options.record) recordEndedGame();
     if (tracksOpponent) opponentLog.apply(event);

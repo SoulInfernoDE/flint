@@ -23,13 +23,20 @@ describe('counters', () => {
       [10, { CARDTYPE: 'MINION', CONTROLLER: '1', ZONE: 'PLAY', ATK: '3' }],
       [11, { CARDTYPE: 'MINION', CONTROLLER: '1', ZONE: 'HAND', ATK: '5' }],
       [12, { CARDTYPE: 'MINION', CONTROLLER: '2', ZONE: 'PLAY', ATK: '7' }],
-      [13, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'DECK' }],
+      // Schools count for played spells only: resolving, in the graveyard or secret zone.
+      [13, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'DECK', SPELL_SCHOOL: '3' }],
+      [14, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'GRAVEYARD', SPELL_SCHOOL: '5' }],
+      [15, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'GRAVEYARD', SPELL_SCHOOL: '1' }],
+      [16, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'SECRET', SPELL_SCHOOL: '5' }],
+      [17, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'GRAVEYARD' }],
+      [18, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'PLAY', SPELL_SCHOOL: '2' }],
     ]);
     expect(counters(game, 2)).toEqual({
       boardAttack: 5,
       nextFatigue: null,
       corpses: 4,
       spellsPlayed: 3,
+      spellSchools: [1, 2, 5],
     });
   });
 

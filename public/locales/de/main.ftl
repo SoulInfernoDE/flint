@@ -120,4 +120,20 @@ counter-spells = { $count ->
         [one] 1 Zauber gespielt
        *[other] { $count } Zauber gespielt
     }
+counter-turn-title = Zeit in diesem Zug
+counter-schools = { $count ->
+        [one] 1 Zauberschule
+       *[other] { $count } Zauberschulen
+    }
+spell-school =
+    { $school ->
+        [1] Arkan
+        [2] Feuer
+        [3] Frost
+        [4] Natur
+        [5] Heilig
+        [6] Schatten
+        [7] Teufel
+       *[other] Schule { $school }
+    }
 setting-show-board = Eigenes Brett im Panel anzeigen

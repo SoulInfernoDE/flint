@@ -16,6 +16,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Deck tracker for games with a deck: the list of the chosen deck (from overLay, read from Hearthstone's `Decks.log`) with the copies left, draw chances and the deck size; the cards seen so far for loaner decks
 - Opponent tracker: the opponent's hand with the turn each card came in (starting hand, the Coin, created and returned cards) and the cards changed in hand, the cards they played by turn, and their deck size; it catches up on the game when it starts in the middle of one
 - Counters below the deck and opponent trackers: attack on the board, next fatigue damage, corpses (Death Knight), spells played and their spell schools, and a turn timer
+- Secrets helper: possible secrets of the opponent by class and format, ruled out automatically for the Standard secrets when their trigger passed without a reaction, and by hand
 - Card names in the game's language and hero images from HearthstoneJSON, cached for 24 hours in overLay's mod storage
 - English and German translations
 - Logos (CC BY-SA 4.0)

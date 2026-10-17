@@ -13,6 +13,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         battlegrounds: fileURLToPath(new URL('./index.html', import.meta.url)),
+        minions: fileURLToPath(new URL('./minions.html', import.meta.url)),
       },
     },
   },

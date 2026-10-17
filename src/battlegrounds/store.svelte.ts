@@ -1,8 +1,10 @@
 // Reactive Battlegrounds state for the panel, fed by the overLay SDK.
 
+import type { FluentVariable } from '@fluent/bundle';
 import { overlay, type Hearthstone, type SettingValue } from '@overlay/sdk';
 import { loadCards, type CardDb } from '../lib/cards';
 import { LastBoards, deriveState, isBattlegrounds, type BgState } from './model';
+import { inferTribes, poolTribes, seenMinions, type Tribes } from './tribes';
 
 export const flint = $state<{
   ready: boolean;
@@ -10,6 +12,8 @@ export const flint = $state<{
   locale: number;
   info: Hearthstone.GameInfo | null;
   bg: BgState | null;
+  tribes: Tribes | null;
+  duos: boolean;
   cards: CardDb;
   cardsError: string | null;
   cardsLoading: boolean;
@@ -19,6 +23,8 @@ export const flint = $state<{
   locale: 0,
   info: null,
   bg: null,
+  tribes: null,
+  duos: false,
   cards: new Map(),
   cardsError: null,
   cardsLoading: true,
@@ -26,6 +32,19 @@ export const flint = $state<{
 });
 
 export const lastBoards = new LastBoards();
+
+/** Text from Flint's catalogs; reading `flint.locale` re-renders after a language switch. */
+export function t(id: string, args?: Record<string, FluentVariable>): string {
+  void flint.locale;
+  return overlay.i18n.t(id, args);
+}
+
+let allTribes: { cards: CardDb; tribes: string[] } | null = null;
+
+function tribesOf(cards: CardDb): string[] {
+  if (allTribes?.cards !== cards) allTribes = { cards, tribes: poolTribes(cards) };
+  return allTribes.tribes;
+}
 
 let scheduled = false;
 
@@ -38,15 +57,22 @@ function recompute(): void {
     const info = flint.info;
     if (!info?.in_game || !isBattlegrounds(info.game_type)) {
       flint.bg = null;
+      flint.tribes = null;
       return;
     }
+    const entities = overlay.events.entities();
     const state = deriveState(
-      overlay.events.entities(),
+      entities,
       info.friendly.player_entity_id,
       info.opposing.player_entity_id,
     );
     if (state) lastBoards.update(state);
     flint.bg = state;
+    flint.duos = info.game_type?.includes('DUO') ?? false;
+    flint.tribes =
+      flint.cards.size > 0
+        ? inferTribes(seenMinions(entities), flint.cards, tribesOf(flint.cards))
+        : null;
   });
 }
 
@@ -59,6 +85,7 @@ async function refreshCards(): Promise<void> {
     flint.cardsError = String(error);
   } finally {
     flint.cardsLoading = false;
+    recompute();
   }
 }
 

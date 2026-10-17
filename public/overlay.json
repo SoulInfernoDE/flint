@@ -14,11 +14,35 @@
       "kind": "overlay",
       "entry": "index.html",
       "width": 270,
-      "height": 600,
-      "position": { "x": 1645, "y": 120 }
+      "height": 680,
+      "position": {
+        "x": 1645,
+        "y": 120
+      }
+    },
+    "minions": {
+      "kind": "overlay",
+      "entry": "minions.html",
+      "width": 236,
+      "height": 860,
+      "position": {
+        "x": 6,
+        "y": 140
+      }
     }
   },
   "settings": [
-    { "id": "show-board", "label": "setting-show-board", "type": "boolean", "default": true }
+    {
+      "id": "show-board",
+      "label": "setting-show-board",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "id": "show-minions",
+      "label": "setting-show-minions",
+      "type": "boolean",
+      "default": true
+    }
   ]
 }

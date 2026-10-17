@@ -237,3 +237,32 @@ ul {
   font-weight: 700;
   color: var(--gold);
 }
+
+.tribes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 6px 8px 0;
+}
+
+.tribe {
+  padding: 0 5px;
+  border-radius: 3px;
+  background: rgb(242 201 76 / 0.15);
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.tribe.unknown {
+  background: none;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.tribe.banned {
+  background: none;
+  color: var(--muted);
+  font-weight: 400;
+  text-decoration: line-through;
+}

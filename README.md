@@ -23,8 +23,12 @@ Battlegrounds panel in the game:
 - **Last seen board** of an opponent when you hover over their row
 - **Your board:** minions with attack/health and tier, golden minions marked
 - **Tavern tier and gold** (including temporary gold)
+- **Tribes of the lobby:** confirmed from the minions you see; once all five are known, the banned ones are shown too
+- **Minions by tier:** a bar with the tavern tiers; click one to list the minions this lobby can offer, by tribe, with stats
 
-Planned: tribes of the lobby, minion list by tier, session recap, then deck tracker, opponent tracker and Arena helpers.
+Everything follows the game as you see it: combat results appear when the combat is shown, not before.
+
+Planned: session recap, then deck tracker, opponent tracker and Arena helpers.
 
 ## Privacy
 

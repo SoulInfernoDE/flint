@@ -16,6 +16,7 @@ export default defineConfig({
         minions: fileURLToPath(new URL('./minions.html', import.meta.url)),
         history: fileURLToPath(new URL('./history.html', import.meta.url)),
         deck: fileURLToPath(new URL('./deck.html', import.meta.url)),
+        opponent: fileURLToPath(new URL('./opponent.html', import.meta.url)),
       },
     },
   },

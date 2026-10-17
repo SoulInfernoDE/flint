@@ -32,10 +32,11 @@ Deck-Tracker in Partien mit Deck (Rangliste, Gelegenheitsspiel, Übung und mehr)
 - **Dein Deck:** jede Karte der Liste mit Manakosten, Seltenheit und den Exemplaren, die noch im Deck sind; gezogene Karten werden abgezogen, leere Zeilen ausgegraut
 - **Ziehchance** jeder Karte und die Zahl der Karten im Deck
 - Bei einem Leihdeck ist die Liste unbekannt; der Tracker zeigt dann die bisher gezogenen Karten
+- **Gegner:** seine Hand nach Platz, mit dem Zug, in dem jede Karte gezogen wurde, der Starthand, der Münze und bekannten Karten; die Karten, die er gespielt hat, mit Zug; die Karten in seinem Deck
 
 Alles folgt dem Spiel so, wie du es siehst: Kampfergebnisse erscheinen, wenn der Kampf gezeigt wird, nicht vorher.
 
-Geplant: Gegner-Tracker, Deck-Statistiken und Arena-Hilfen.
+Geplant: Deck-Statistiken, Geheimnis-Helfer und Arena-Hilfen.
 
 ## Datenschutz
 

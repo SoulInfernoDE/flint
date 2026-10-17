@@ -32,10 +32,11 @@ Deck tracker in games with a deck (Ranked, Casual, practice and more):
 - **Your deck:** every card of the list with mana cost, rarity and the copies still in the deck; cards drawn are taken off, empty rows are greyed out
 - **Draw chance** of each card and the number of cards in the deck
 - With a loaner deck the list is unknown; the tracker then shows the cards drawn so far
+- **Opponent:** their hand by slot, with the turn each card was drawn, the starting hand, the Coin and known cards; the cards they played with the turn; the cards left in their deck
 
 Everything follows the game as you see it: combat results appear when the combat is shown, not before.
 
-Planned: opponent tracker, deck statistics and Arena helpers.
+Planned: deck statistics, secrets helper and Arena helpers.
 
 ## Privacy
 

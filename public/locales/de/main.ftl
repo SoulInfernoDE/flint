@@ -85,4 +85,25 @@ deck-in-deck = { $count } im Deck
 deck-in-deck-title = Karten jetzt in deinem Deck, auch die während der Partie hineingemischten
 deck-unlisted = Die Deckliste ist unbekannt (Leihdeck), darum stehen hier die bisher gesehenen Karten.
 setting-show-deck = Dein Deck in Partien mit Deck anzeigen
+opp-title = Gegner
+opp-hand = { $count ->
+        [one] Hand: 1 Karte
+       *[other] Hand: { $count } Karten
+    }
+opp-played = { $count ->
+        [one] Gespielt: 1 Karte
+       *[other] Gespielt: { $count } Karten
+    }
+opp-nothing-played = Noch nichts gespielt.
+opp-starting-hand = Starthand
+opp-drawn = Gezogen in Zug { $turn }
+opp-unknown-origin = Gezogen, bevor Flint lief
+opp-created = Erschaffen in Zug { $turn }
+opp-created-by-turn = { $card }, Zug { $turn }
+opp-returned = Zurück auf der Hand in Zug { $turn }
+opp-turn = Zug { $turn }
+opp-coin = Die Münze
+opp-created-card = Erschaffene Karte
+opp-created-by = Erschaffen von { $card }
+setting-show-opponent = Hand und gespielte Karten des Gegners anzeigen
 setting-show-board = Eigenes Brett im Panel anzeigen

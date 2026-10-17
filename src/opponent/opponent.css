@@ -1,0 +1,50 @@
+/* Opponent tracker: their hand by slot, and the cards they played. */
+.opponent .left {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.hand {
+  padding: 0 4px 4px;
+}
+
+.hand li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  margin: 2px 0;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--row);
+}
+
+.slot {
+  width: 14px;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.hand .name {
+  flex: 1;
+  color: var(--muted);
+}
+
+.hand .name.known {
+  color: var(--text);
+}
+
+.created {
+  color: var(--accent);
+}
+
+.turn {
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.opponent .cards {
+  max-height: 360px;
+  overflow-y: auto;
+}

@@ -1,0 +1,89 @@
+/* Deck tracker: one row per card, like the card tiles of the game's deck list. */
+.deck .left {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.cards {
+  padding: 4px;
+}
+
+.cards li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  margin: 2px 0;
+  padding: 0 6px 0 0;
+  border-radius: 4px;
+  background: var(--row);
+  overflow: hidden;
+}
+
+.cards .tile {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  opacity: 0.45;
+  mask-image: linear-gradient(90deg, transparent, black 55%);
+  pointer-events: none;
+}
+
+.cards li > :not(.tile) {
+  position: relative;
+}
+
+.cost {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 100%;
+  flex-shrink: 0;
+  background: #2b5aa8;
+  color: #fff;
+  font-weight: 700;
+}
+
+.cards .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Rarity as a thin mark at the left edge of the cost. */
+.cards li.rare .cost {
+  box-shadow: inset 3px 0 #3d8bff;
+}
+
+.cards li.epic .cost {
+  box-shadow: inset 3px 0 #a64dff;
+}
+
+.cards li.legendary .cost {
+  box-shadow: inset 3px 0 #ff9f1a;
+}
+
+.chance {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.count {
+  min-width: 14px;
+  color: var(--gold);
+  font-weight: 700;
+  text-align: right;
+}
+
+.count.seen {
+  color: var(--muted);
+}
+
+/* No copy left in the deck. */
+.cards li.gone {
+  opacity: 0.4;
+}

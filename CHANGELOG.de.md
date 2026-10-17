@@ -13,6 +13,7 @@ Alle nennenswerten Änderungen werden hier festgehalten. Das Format folgt [Keep 
 - Dienerliste nach Stufe in einem eigenen Overlay-Fenster, gefiltert nach den Völkern der Lobby (Diener nur für Duos nur in Duos)
 - Sitzungsrückblick: Das Panel zeigt Partien, durchschnittliche Platzierung und Top-4-Ergebnisse der aktuellen Sitzung; Flints Seite im Launcher listet alle aufgezeichneten Partien und beginnt auf Wunsch eine neue Sitzung
 - Filter nach Schlüsselwörtern in der Dienerliste (Kampfschrei, Todesröcheln, Mobilisieren, Gottesschild und weitere, benannt wie im Spiel)
+- Deck-Tracker für Partien mit Deck: die Liste des gewählten Decks (von overLay, aus Hearthstones `Decks.log`) mit verbleibenden Exemplaren, Ziehchancen und Deckgröße; bei Leihdecks die bisher gesehenen Karten
 - Kartennamen in der Sprache des Spiels und Heldenbilder von HearthstoneJSON, 24 Stunden im Mod-Speicher von overLay zwischengespeichert
 - Übersetzungen auf Englisch und Deutsch
 - Logos (CC BY-SA 4.0)

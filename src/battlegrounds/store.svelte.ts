@@ -2,7 +2,8 @@
 
 import type { FluentVariable } from '@fluent/bundle';
 import { overlay, type Hearthstone, type SettingValue } from '@overlay/sdk';
-import { loadCards, type CardDb } from '../lib/cards';
+import { trackDeck, type DeckState } from '../deck/model';
+import { loadCards, loadCollectible, type CardDb, type CollectibleDb } from '../lib/cards';
 import { LastBoards, deriveState, isBattlegrounds, type BgState } from './model';
 import { addGame, recordGame, type History } from './history';
 import { inferTribes, poolTribes, seenMinions, type Tribes } from './tribes';
@@ -16,6 +17,10 @@ export const flint = $state<{
   tribes: Tribes | null;
   duos: boolean;
   history: History;
+  /** The user's deck in a game with a deck (not Battlegrounds). */
+  deck: DeckState | null;
+  /** Collectible cards; loaded the first time a game with a deck is seen. */
+  collectible: CollectibleDb | null;
   cards: CardDb;
   cardsError: string | null;
   cardsLoading: boolean;
@@ -28,6 +33,8 @@ export const flint = $state<{
   tribes: null,
   duos: false,
   history: { games: [], sessionStart: null },
+  deck: null,
+  collectible: null,
   cards: new Map(),
   cardsError: null,
   cardsLoading: true,
@@ -97,6 +104,11 @@ function recompute(): void {
   requestAnimationFrame(() => {
     scheduled = false;
     const info = flint.info;
+    if (info?.in_game && info.game_type && !isBattlegrounds(info.game_type)) {
+      if (tracksDeck) updateDeck(info);
+    } else {
+      flint.deck = null;
+    }
     if (!info?.in_game || !isBattlegrounds(info.game_type)) {
       flint.bg = null;
       flint.tribes = null;
@@ -120,6 +132,32 @@ function recompute(): void {
   });
 }
 
+/** Whether this window shows the deck (only it loads the collectible cards). */
+let tracksDeck = false;
+let collectibleLoading = false;
+
+function updateDeck(info: Hearthstone.GameInfo): void {
+  if (!flint.collectible) {
+    if (!collectibleLoading) {
+      collectibleLoading = true;
+      loadCollectible(overlay.i18n.locale())
+        .then((db) => (flint.collectible = db))
+        .catch((error: unknown) => (flint.cardsError = String(error)))
+        .finally(() => {
+          collectibleLoading = false;
+          recompute();
+        });
+    }
+    return;
+  }
+  flint.deck = trackDeck(
+    overlay.events.entities(),
+    info.friendly.player_entity_id,
+    info.deck,
+    flint.collectible,
+  );
+}
+
 async function refreshCards(): Promise<void> {
   flint.cardsLoading = true;
   try {
@@ -133,8 +171,12 @@ async function refreshCards(): Promise<void> {
   }
 }
 
-/** Starts the store; `record` makes this window store finished games (only one may). */
-export async function start(options: { record?: boolean } = {}): Promise<void> {
+/**
+ * Starts the store; `record` makes this window store finished games (only one may),
+ * `deck` makes it follow the user's deck.
+ */
+export async function start(options: { record?: boolean; deck?: boolean } = {}): Promise<void> {
+  tracksDeck = options.deck ?? false;
   await overlay.ready();
   // Texts drawn before the catalogs were loaded show their ids; draw them again.
   flint.locale += 1;
@@ -162,6 +204,8 @@ export async function start(options: { record?: boolean } = {}): Promise<void> {
   overlay.settings.onChange((settings) => (flint.settings = settings));
   overlay.i18n.onChange(() => {
     flint.locale += 1;
+    // Card names follow the language; the deck's cards are loaded again when needed.
+    flint.collectible = null;
     void refreshCards();
   });
   await refreshCards();

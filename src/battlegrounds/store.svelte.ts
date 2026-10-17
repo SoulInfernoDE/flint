@@ -4,6 +4,7 @@ import type { FluentVariable } from '@fluent/bundle';
 import { overlay, type Hearthstone, type SettingValue } from '@overlay/sdk';
 import { loadCards, type CardDb } from '../lib/cards';
 import { LastBoards, deriveState, isBattlegrounds, type BgState } from './model';
+import { addGame, recordGame, type History } from './history';
 import { inferTribes, poolTribes, seenMinions, type Tribes } from './tribes';
 
 export const flint = $state<{
@@ -14,6 +15,7 @@ export const flint = $state<{
   bg: BgState | null;
   tribes: Tribes | null;
   duos: boolean;
+  history: History;
   cards: CardDb;
   cardsError: string | null;
   cardsLoading: boolean;
@@ -25,6 +27,7 @@ export const flint = $state<{
   bg: null,
   tribes: null,
   duos: false,
+  history: { games: [], sessionStart: null },
   cards: new Map(),
   cardsError: null,
   cardsLoading: true,
@@ -37,6 +40,45 @@ export const lastBoards = new LastBoards();
 export function t(id: string, args?: Record<string, FluentVariable>): string {
   void flint.locale;
   return overlay.i18n.t(id, args);
+}
+
+const HISTORY_KEY = 'bg-history';
+/** Tribes of the running game; kept when the game ends, for its record. */
+let lastTribes: string[] = [];
+
+/** Loads the stored history, changes it and stores it; other windows reload theirs. */
+async function updateHistory(change: (history: History) => History): Promise<void> {
+  const stored = await overlay.storage.get<History>(HISTORY_KEY).catch(() => null);
+  const history = change(stored ?? { games: [], sessionStart: null });
+  flint.history = history;
+  await overlay.storage.set(HISTORY_KEY, history);
+  await overlay.bus.post({ kind: 'history' });
+}
+
+async function reloadHistory(): Promise<void> {
+  const stored = await overlay.storage.get<History>(HISTORY_KEY).catch(() => null);
+  if (stored) flint.history = stored;
+}
+
+/** Starts a new session now. */
+export function newSession(): Promise<void> {
+  return updateHistory((history) => ({ ...history, sessionStart: Date.now() }));
+}
+
+function recordEndedGame(): void {
+  const info = flint.info;
+  if (!info || !isBattlegrounds(info.game_type)) return;
+  const record = recordGame(
+    overlay.events.entities(),
+    info.friendly.player_entity_id,
+    info.game_entity_id,
+    { endedAt: Date.now(), duos: flint.duos, tribes: lastTribes },
+  );
+  if (record) {
+    updateHistory((history) => addGame(history, record)).catch((error: unknown) =>
+      console.warn('[flint] game not stored:', error),
+    );
+  }
 }
 
 let allTribes: { cards: CardDb; tribes: string[] } | null = null;
@@ -73,6 +115,8 @@ function recompute(): void {
       flint.cards.size > 0
         ? inferTribes(seenMinions(entities), flint.cards, tribesOf(flint.cards))
         : null;
+    // A plain copy: reactive arrays cannot be sent to overLay as they are.
+    if (flint.tribes) lastTribes = [...flint.tribes.active];
   });
 }
 
@@ -89,12 +133,19 @@ async function refreshCards(): Promise<void> {
   }
 }
 
-export async function start(): Promise<void> {
+/** Starts the store; `record` makes this window store finished games (only one may). */
+export async function start(options: { record?: boolean } = {}): Promise<void> {
   await overlay.ready();
+  // Texts drawn before the catalogs were loaded show their ids; draw them again.
+  flint.locale += 1;
   flint.settings = overlay.settings.get();
   flint.info = await overlay.events.getInfo();
+  await reloadHistory();
   flint.ready = true;
   recompute();
+  overlay.bus.onMessage((message) => {
+    if ((message as { kind?: string } | null)?.kind === 'history') void reloadHistory();
+  });
 
   overlay.events.onInfo((info) => {
     flint.info = info;
@@ -102,7 +153,11 @@ export async function start(): Promise<void> {
   });
   overlay.events.onEntitiesChanged(recompute);
   overlay.events.on((event) => {
-    if (event.name === 'game-created') lastBoards.clear();
+    if (event.name === 'game-created') {
+      lastBoards.clear();
+      lastTribes = [];
+    }
+    if (event.name === 'game-end' && options.record) recordEndedGame();
   });
   overlay.settings.onChange((settings) => (flint.settings = settings));
   overlay.i18n.onChange(() => {

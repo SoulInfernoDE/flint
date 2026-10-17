@@ -25,10 +25,11 @@ Schlachtfeld-Panel im Spiel:
 - **Tavernenstufe und Gold** (einschließlich Bonusgold)
 - **Völker der Lobby:** bestätigt anhand der Diener, die du siehst; sobald alle fünf bekannt sind, erscheinen auch die gesperrten
 - **Diener nach Stufe:** eine Leiste mit den Tavernenstufen; ein Klick zeigt die Diener, die diese Lobby anbieten kann, nach Volk und mit Werten
+- **Sitzungsrückblick:** Partien, durchschnittliche Platzierung und Top-4-Ergebnisse der aktuellen Sitzung im Panel; der vollständige Verlauf (Held, Platzierung, Tavernenstufe, Völker) auf Flints Seite im overLay-Launcher, wo du auch eine neue Sitzung beginnen kannst. Eine Pause von mehr als vier Stunden beginnt von selbst eine neue
 
 Alles folgt dem Spiel so, wie du es siehst: Kampfergebnisse erscheinen, wenn der Kampf gezeigt wird, nicht vorher.
 
-Geplant: Sitzungsrückblick, danach Deck-Tracker, Gegner-Tracker und Arena-Hilfen.
+Geplant: Deck-Tracker, Gegner-Tracker und Arena-Hilfen.
 
 ## Datenschutz
 
@@ -38,6 +39,8 @@ Flint hat keine Telemetrie, keine Werbung und kein Konto. Es kontaktiert nur die
 |---|---|
 | `api.hearthstonejson.com` | Kartennamen in deiner Sprache (24 Stunden zwischengespeichert) |
 | `art.hearthstonejson.com` | Heldenbilder |
+
+Dein Spielverlauf bleibt auf deinem Rechner, im overLay-Speicher von Flint.
 
 Die Spieldaten kommen von overLay, das Hearthstones eigene Logdateien liest. Flint greift nie auf den Spielprozess zu.
 

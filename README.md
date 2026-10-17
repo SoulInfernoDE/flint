@@ -25,10 +25,11 @@ Battlegrounds panel in the game:
 - **Tavern tier and gold** (including temporary gold)
 - **Tribes of the lobby:** confirmed from the minions you see; once all five are known, the banned ones are shown too
 - **Minions by tier:** a bar with the tavern tiers; click one to list the minions this lobby can offer, by tribe, with stats
+- **Session recap:** games, average placement and top 4 finishes of the current session in the panel; the full history (hero, placement, tavern tier, tribes) on Flint's page in the overLay launcher, where you can also start a new session. A break of more than four hours starts one by itself
 
 Everything follows the game as you see it: combat results appear when the combat is shown, not before.
 
-Planned: session recap, then deck tracker, opponent tracker and Arena helpers.
+Planned: deck tracker, opponent tracker and Arena helpers.
 
 ## Privacy
 
@@ -38,6 +39,8 @@ Flint has no telemetry, no ads and no account. It only contacts the hosts declar
 |---|---|
 | `api.hearthstonejson.com` | Card names in your language (cached for 24 hours) |
 | `art.hearthstonejson.com` | Hero images |
+
+Your game history stays on your computer, in Flint's overLay storage.
 
 Game data comes from overLay, which reads Hearthstone's own log files. Flint never touches the game process.
 

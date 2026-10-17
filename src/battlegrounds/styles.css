@@ -266,3 +266,38 @@ ul {
   font-weight: 400;
   text-decoration: line-through;
 }
+
+.session {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 8px 8px;
+}
+
+.places {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.place-chip {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: rgb(157 146 179 / 0.2);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.place-chip.win {
+  background: rgb(46 211 183 / 0.2);
+  color: var(--you);
+}
+
+.place-chip.first {
+  background: rgb(242 201 76 / 0.25);
+  color: var(--gold);
+}

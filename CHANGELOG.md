@@ -11,6 +11,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Battlegrounds panel: lobby by leaderboard place with tavern tier, health and armor, eliminated players, you, your next opponent and the current combat; last seen board of an opponent on hover; your board; tavern tier and gold
 - Tribes of the lobby, confirmed from the minions seen in the game, with the banned tribes once all are known
 - Minion list by tier in its own overlay window, filtered by the lobby's tribes (Duos-only minions in Duos only)
+- Session recap: the panel shows the current session's games, average placement and top 4 finishes; Flint's page in the launcher lists every recorded game and starts a new session on request
 - Card names in the game's language and hero images from HearthstoneJSON, cached for 24 hours in overLay's mod storage
 - English and German translations
 - Logos (CC BY-SA 4.0)

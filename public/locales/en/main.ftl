@@ -47,4 +47,20 @@ bg-minions-count =
     }
 bg-minions-incomplete = Not all tribes are known yet, so minions of every possible tribe are listed.
 setting-show-minions = Show the minion list by tier
+bg-session = This session
+bg-session-empty = No finished games yet.
+bg-session-summary =
+    { $games ->
+        [one] 1 game
+       *[other] { $games } games
+    } · avg. place { NUMBER($average, maximumFractionDigits: 1) } · { $wins } top 4
+history-title = Battlegrounds history
+history-new-session = Start a new session
+history-games = Games
+history-empty = No games recorded yet. Flint records every Battlegrounds game that ends while overLay runs.
+history-col-date = Ended
+history-col-hero = Hero
+history-col-place = Place
+history-col-tier = Tavern
+history-col-tribes = Tribes
 setting-show-board = Show your board in the panel

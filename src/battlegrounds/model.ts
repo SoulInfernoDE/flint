@@ -127,7 +127,8 @@ export function deriveState(
         place: num(hero, 'PLAYER_LEADERBOARD_PLACE'),
         health,
         armor: num(hero, 'ARMOR'),
-        tier: num(hero, 'PLAYER_TECH_LEVEL'),
+        // Set only after the first upgrade or later; everyone starts on tier 1.
+        tier: num(hero, 'PLAYER_TECH_LEVEL') || 1,
         triples: num(hero, 'PLAYER_TRIPLES'),
         friendly: id === playerId,
         nextOpponent: id === nextOpponent,
@@ -139,7 +140,7 @@ export function deriveState(
 
   return {
     playerId,
-    tier: num(player, 'PLAYER_TECH_LEVEL'),
+    tier: num(player, 'PLAYER_TECH_LEVEL') || 1,
     maxTier: num(player, 'BACON_MAX_PLAYER_TECH_LEVEL') || 6,
     gold: Math.max(
       0,

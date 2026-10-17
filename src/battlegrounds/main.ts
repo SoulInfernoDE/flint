@@ -7,4 +7,5 @@ const target = document.getElementById('app');
 if (!target) throw new Error('missing #app mount point');
 
 mount(App, { target });
-void start();
+// This window stores finished games; the others only read them.
+void start({ record: true });

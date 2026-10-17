@@ -2,6 +2,7 @@
   import { overlay } from '@overlay/sdk';
   import { tileUrl } from '../lib/cards';
   import type { BgMinion } from './model';
+  import { sessionGames, summarize } from './history';
   import { cardName, flint, lastBoards, t } from './store.svelte';
 
   let panel: HTMLElement | undefined = $state();
@@ -9,6 +10,9 @@
   let hovered: number | null = $state(null);
 
   const bg = $derived(flint.bg);
+  // Recomputed when a game is stored; the session cannot end during a game.
+  const sessionList = $derived(sessionGames(flint.history, Date.now()));
+  const session = $derived(summarize(sessionList));
   const hoveredBoard = $derived(hovered === null ? undefined : lastBoards.get(hovered));
 
   // Outside Battlegrounds the panel is empty and lets every click through to the game.
@@ -142,6 +146,30 @@
           {/each}
         </ul>
       {/if}
+    {/if}
+
+    <h2>{t('bg-session')}</h2>
+    {#if session.games === 0}
+      <p class="note">{t('bg-session-empty')}</p>
+    {:else}
+      <div class="session">
+        <span>
+          {t('bg-session-summary', {
+            games: session.games,
+            average: session.average ?? 0,
+            wins: session.wins,
+          })}
+        </span>
+        <span class="places">
+          {#each sessionList.slice(-10) as game (game.seed)}
+            <span
+              class="place-chip"
+              class:win={game.place <= (game.duos ? 2 : 4)}
+              class:first={game.place === 1}>{game.place}</span
+            >
+          {/each}
+        </span>
+      </div>
     {/if}
   </section>
 {/if}

@@ -10,6 +10,8 @@ import { compact, hsLocale, toMap, type CardDb, type Compact, type RawCard } fro
 export { hsLocale, tileUrl, type CardDb, type CardInfo } from './card-data';
 
 const CACHE_KEY = 'cards-v2';
+/** Caches of earlier Flint versions, removed to free storage. */
+const OLD_CACHE_KEYS = ['cards-v1'];
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 interface Cached {
@@ -19,6 +21,7 @@ interface Cached {
 }
 
 export async function loadCards(language: string): Promise<CardDb> {
+  for (const key of OLD_CACHE_KEYS) await overlay.storage.remove(key).catch(() => undefined);
   const locale = hsLocale(language);
   const cached = await overlay.storage.get<Cached>(CACHE_KEY).catch(() => null);
   if (cached && cached.locale === locale && Date.now() - cached.fetchedAt < MAX_AGE_MS) {

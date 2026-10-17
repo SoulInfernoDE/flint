@@ -1,0 +1,157 @@
+/* Battlegrounds history page in the launcher; shares the colours of the overlay panel. */
+:root {
+  color-scheme: dark;
+  --surface: #1b1429;
+  --card: #241a36;
+  --border: #3d2a5c;
+  --text: #ece6f6;
+  --muted: #9d92b3;
+  --gold: #f2c94c;
+  --accent: #ff9f43;
+  --you: #2ed3b7;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font:
+    13px/1.45 'Inter',
+    'Segoe UI',
+    'Noto Sans',
+    system-ui,
+    sans-serif;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 24px 32px;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 20px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.card {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.card > h2 {
+  margin-bottom: 10px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.card p {
+  margin: 0 0 8px;
+}
+
+.note {
+  color: var(--muted);
+}
+
+button {
+  padding: 5px 12px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: rgb(255 159 67 / 0.15);
+}
+
+.places {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.place-chip {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: rgb(157 146 179 / 0.2);
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.place-chip.win {
+  background: rgb(46 211 183 / 0.2);
+  color: var(--you);
+}
+
+.place-chip.first {
+  background: rgb(242 201 76 / 0.25);
+  color: var(--gold);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+}
+
+td {
+  padding: 5px 8px;
+  border-bottom: 1px solid rgb(61 42 92 / 0.5);
+  vertical-align: middle;
+}
+
+.date {
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero img {
+  width: 64px;
+  height: 22px;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+.tribes {
+  color: var(--muted);
+  font-size: 12px;
+}

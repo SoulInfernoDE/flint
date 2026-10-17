@@ -11,6 +11,7 @@ Alle nennenswerten Änderungen werden hier festgehalten. Das Format folgt [Keep 
 - Schlachtfeld-Panel: Lobby nach Platzierung mit Tavernenstufe, Leben und Rüstung, ausgeschiedenen Spielern, dir, deinem nächsten Gegner und dem aktuellen Kampf; zuletzt gesehenes Brett eines Gegners beim Überfahren mit der Maus; dein Brett; Tavernenstufe und Gold
 - Völker der Lobby, bestätigt anhand der im Spiel gesehenen Diener, mit den gesperrten Völkern, sobald alle bekannt sind
 - Dienerliste nach Stufe in einem eigenen Overlay-Fenster, gefiltert nach den Völkern der Lobby (Diener nur für Duos nur in Duos)
+- Sitzungsrückblick: Das Panel zeigt Partien, durchschnittliche Platzierung und Top-4-Ergebnisse der aktuellen Sitzung; Flints Seite im Launcher listet alle aufgezeichneten Partien und beginnt auf Wunsch eine neue Sitzung
 - Kartennamen in der Sprache des Spiels und Heldenbilder von HearthstoneJSON, 24 Stunden im Mod-Speicher von overLay zwischengespeichert
 - Übersetzungen auf Englisch und Deutsch
 - Logos (CC BY-SA 4.0)

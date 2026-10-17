@@ -29,6 +29,10 @@
         "x": 6,
         "y": 140
       }
+    },
+    "history": {
+      "kind": "desktop",
+      "entry": "history.html"
     }
   },
   "settings": [

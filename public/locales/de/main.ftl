@@ -47,4 +47,20 @@ bg-minions-count =
     }
 bg-minions-incomplete = Noch sind nicht alle Völker bekannt, darum stehen hier Diener aller möglichen Völker.
 setting-show-minions = Dienerliste nach Stufe anzeigen
+bg-session = Diese Sitzung
+bg-session-empty = Noch keine beendete Partie.
+bg-session-summary =
+    { $games ->
+        [one] 1 Partie
+       *[other] { $games } Partien
+    } · Ø Platz { NUMBER($average, maximumFractionDigits: 1) } · { $wins }× Top 4
+history-title = Schlachtfeld-Verlauf
+history-new-session = Neue Sitzung beginnen
+history-games = Partien
+history-empty = Noch keine Partien aufgezeichnet. Flint zeichnet jede Schlachtfeld-Partie auf, die endet, während overLay läuft.
+history-col-date = Beendet
+history-col-hero = Held
+history-col-place = Platz
+history-col-tier = Taverne
+history-col-tribes = Völker
 setting-show-board = Eigenes Brett im Panel anzeigen

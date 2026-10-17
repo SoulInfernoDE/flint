@@ -14,6 +14,7 @@ export default defineConfig({
       input: {
         battlegrounds: fileURLToPath(new URL('./index.html', import.meta.url)),
         minions: fileURLToPath(new URL('./minions.html', import.meta.url)),
+        history: fileURLToPath(new URL('./history.html', import.meta.url)),
       },
     },
   },

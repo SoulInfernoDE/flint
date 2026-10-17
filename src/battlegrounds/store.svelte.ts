@@ -3,6 +3,7 @@
 import type { FluentVariable } from '@fluent/bundle';
 import { overlay, type Hearthstone, type SettingValue } from '@overlay/sdk';
 import { trackDeck, type DeckState } from '../deck/model';
+import { OpponentLog, deriveOpponent, type OpponentState } from '../opponent/model';
 import { loadCards, loadCollectible, type CardDb, type CollectibleDb } from '../lib/cards';
 import { LastBoards, deriveState, isBattlegrounds, type BgState } from './model';
 import { addGame, recordGame, type History } from './history';
@@ -19,6 +20,8 @@ export const flint = $state<{
   history: History;
   /** The user's deck in a game with a deck (not Battlegrounds). */
   deck: DeckState | null;
+  /** The opponent's hand and played cards in a game with decks. */
+  opponent: OpponentState | null;
   /** Collectible cards; loaded the first time a game with a deck is seen. */
   collectible: CollectibleDb | null;
   cards: CardDb;
@@ -34,6 +37,7 @@ export const flint = $state<{
   duos: false,
   history: { games: [], sessionStart: null },
   deck: null,
+  opponent: null,
   collectible: null,
   cards: new Map(),
   cardsError: null,
@@ -105,9 +109,10 @@ function recompute(): void {
     scheduled = false;
     const info = flint.info;
     if (info?.in_game && info.game_type && !isBattlegrounds(info.game_type)) {
-      if (tracksDeck) updateDeck(info);
+      if (tracksDeck || tracksOpponent) updateDeckGame(info);
     } else {
       flint.deck = null;
+      flint.opponent = null;
     }
     if (!info?.in_game || !isBattlegrounds(info.game_type)) {
       flint.bg = null;
@@ -132,11 +137,14 @@ function recompute(): void {
   });
 }
 
-/** Whether this window shows the deck (only it loads the collectible cards). */
+/** Whether this window shows the deck or the opponent (only those load collectible cards). */
 let tracksDeck = false;
+let tracksOpponent = false;
+const opponentLog = new OpponentLog();
 let collectibleLoading = false;
 
-function updateDeck(info: Hearthstone.GameInfo): void {
+/** Deck and opponent in a game with decks; loads the collectible cards first. */
+function updateDeckGame(info: Hearthstone.GameInfo): void {
   if (!flint.collectible) {
     if (!collectibleLoading) {
       collectibleLoading = true;
@@ -150,12 +158,13 @@ function updateDeck(info: Hearthstone.GameInfo): void {
     }
     return;
   }
-  flint.deck = trackDeck(
-    overlay.events.entities(),
-    info.friendly.player_entity_id,
-    info.deck,
-    flint.collectible,
-  );
+  const entities = overlay.events.entities();
+  if (tracksDeck) {
+    flint.deck = trackDeck(entities, info.friendly.player_entity_id, info.deck, flint.collectible);
+  }
+  if (tracksOpponent) {
+    flint.opponent = deriveOpponent(entities, info.opposing.player_entity_id, opponentLog);
+  }
 }
 
 async function refreshCards(): Promise<void> {
@@ -173,10 +182,13 @@ async function refreshCards(): Promise<void> {
 
 /**
  * Starts the store; `record` makes this window store finished games (only one may),
- * `deck` makes it follow the user's deck.
+ * `deck` makes it follow the user's deck, `opponent` the opponent's hand and plays.
  */
-export async function start(options: { record?: boolean; deck?: boolean } = {}): Promise<void> {
+export async function start(
+  options: { record?: boolean; deck?: boolean; opponent?: boolean } = {},
+): Promise<void> {
   tracksDeck = options.deck ?? false;
+  tracksOpponent = options.opponent ?? false;
   await overlay.ready();
   // Texts drawn before the catalogs were loaded show their ids; draw them again.
   flint.locale += 1;
@@ -200,7 +212,14 @@ export async function start(options: { record?: boolean; deck?: boolean } = {}):
       lastTribes = [];
     }
     if (event.name === 'game-end' && options.record) recordEndedGame();
+    if (tracksOpponent) opponentLog.apply(event);
   });
+  // Catch up on the game so far (when this window starts in the middle of one); events
+  // that also arrived live are applied again, which the log takes into account.
+  if (tracksOpponent) {
+    for (const event of await overlay.events.history().catch(() => [])) opponentLog.apply(event);
+    recompute();
+  }
   overlay.settings.onChange((settings) => (flint.settings = settings));
   overlay.i18n.onChange(() => {
     flint.locale += 1;

@@ -43,6 +43,16 @@
         "x": 1680,
         "y": 140
       }
+    },
+    "opponent": {
+      "kind": "overlay",
+      "entry": "opponent.html",
+      "width": 224,
+      "height": 760,
+      "position": {
+        "x": 8,
+        "y": 140
+      }
     }
   },
   "settings": [
@@ -61,6 +71,12 @@
     {
       "id": "show-deck",
       "label": "setting-show-deck",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "id": "show-opponent",
+      "label": "setting-show-opponent",
       "type": "boolean",
       "default": true
     }

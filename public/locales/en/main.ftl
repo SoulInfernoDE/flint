@@ -85,4 +85,25 @@ deck-in-deck = { $count } in deck
 deck-in-deck-title = Cards in your deck now, including cards shuffled in during the game
 deck-unlisted = The deck list is unknown (loaner deck), so the cards seen so far are listed.
 setting-show-deck = Show your deck in games with a deck
+opp-title = Opponent
+opp-hand = { $count ->
+        [one] Hand: 1 card
+       *[other] Hand: { $count } cards
+    }
+opp-played = { $count ->
+        [one] Played: 1 card
+       *[other] Played: { $count } cards
+    }
+opp-nothing-played = Nothing played yet.
+opp-starting-hand = Starting hand
+opp-drawn = Drawn on turn { $turn }
+opp-unknown-origin = Drawn before Flint started
+opp-created = Created on turn { $turn }
+opp-created-by-turn = { $card }, turn { $turn }
+opp-returned = Back in hand on turn { $turn }
+opp-turn = Turn { $turn }
+opp-coin = The Coin
+opp-created-card = Created card
+opp-created-by = Created by { $card }
+setting-show-opponent = Show the opponent's hand and played cards
 setting-show-board = Show your board in the panel

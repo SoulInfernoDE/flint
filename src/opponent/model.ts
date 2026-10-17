@@ -23,6 +23,12 @@ export interface HandCard {
   cardId: string | null;
   /** Card that created it, if known. */
   createdBy: string | null;
+  /**
+   * Enchantments on the card (buffs and other changes made in hand), by the card that
+   * made each one, or null where that card is hidden. The new stats of a hidden card
+   * stay hidden; that it was changed, and by what, is visible.
+   */
+  enchantedBy: (string | null)[];
 }
 
 export interface PlayedCard {
@@ -109,6 +115,18 @@ export function deriveOpponent(
   if (!player || !controller) return null;
 
   const theirs = [...entities.values()].filter((e) => e.tags.CONTROLLER === controller);
+  // Enchantments by the entity they are attached to (they live in PLAY while active).
+  const enchantments = new Map<number, (string | null)[]>();
+  for (const e of entities.values()) {
+    if (e.tags.CARDTYPE !== 'ENCHANTMENT' || e.tags.ZONE !== 'PLAY') continue;
+    const target = Number(e.tags.ATTACHED);
+    // A card's own enchantments (set up by itself) are not changes made in hand.
+    if (!target || e.tags.CREATOR === e.tags.ATTACHED) continue;
+    const source = e.tags.CREATOR ? entities.get(Number(e.tags.CREATOR)) : undefined;
+    const list = enchantments.get(target) ?? [];
+    list.push(source?.card_id ?? null);
+    enchantments.set(target, list);
+  }
   const hand = theirs
     .filter((e) => e.tags.ZONE === 'HAND')
     .sort((a, b) => Number(a.tags.ZONE_POSITION ?? 0) - Number(b.tags.ZONE_POSITION ?? 0))
@@ -122,6 +140,7 @@ export function deriveOpponent(
         starting: entered?.starting ?? false,
         cardId: e.card_id,
         createdBy: creator?.card_id ?? null,
+        enchantedBy: enchantments.get(e.entity_id) ?? [],
       };
     });
   const played = log

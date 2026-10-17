@@ -14,7 +14,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Session recap: the panel shows the current session's games, average placement and top 4 finishes; Flint's page in the launcher lists every recorded game and starts a new session on request
 - Keyword filter in the minion list (Battlecry, Deathrattle, Rally, Divine Shield and more, named as in the game)
 - Deck tracker for games with a deck: the list of the chosen deck (from overLay, read from Hearthstone's `Decks.log`) with the copies left, draw chances and the deck size; the cards seen so far for loaner decks
-- Opponent tracker: the opponent's hand with the turn each card came in (starting hand, the Coin, created and returned cards), the cards they played by turn, and their deck size; it catches up on the game when it starts in the middle of one
+- Opponent tracker: the opponent's hand with the turn each card came in (starting hand, the Coin, created and returned cards) and the cards changed in hand, the cards they played by turn, and their deck size; it catches up on the game when it starts in the middle of one
 - Card names in the game's language and hero images from HearthstoneJSON, cached for 24 hours in overLay's mod storage
 - English and German translations
 - Logos (CC BY-SA 4.0)

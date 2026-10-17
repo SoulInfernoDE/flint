@@ -48,3 +48,9 @@
   max-height: 360px;
   overflow-y: auto;
 }
+
+/* Changed while in hand (buffs and other enchantments). */
+.enchanted {
+  color: var(--gold);
+  font-weight: 700;
+}

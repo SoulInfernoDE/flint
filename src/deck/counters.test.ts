@@ -25,11 +25,34 @@ describe('counters', () => {
       [12, { CARDTYPE: 'MINION', CONTROLLER: '2', ZONE: 'PLAY', ATK: '7' }],
       // Schools count for played spells only: resolving, in the graveyard or secret zone.
       [13, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'DECK', SPELL_SCHOOL: '3' }],
-      [14, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'GRAVEYARD', SPELL_SCHOOL: '5' }],
-      [15, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'GRAVEYARD', SPELL_SCHOOL: '1' }],
+      [
+        14,
+        {
+          CARDTYPE: 'SPELL',
+          CONTROLLER: '1',
+          ZONE: 'GRAVEYARD',
+          SPELL_SCHOOL: '5',
+          JUST_PLAYED: '0',
+        },
+      ],
+      [
+        15,
+        {
+          CARDTYPE: 'SPELL',
+          CONTROLLER: '1',
+          ZONE: 'GRAVEYARD',
+          SPELL_SCHOOL: '1',
+          JUST_PLAYED: '0',
+        },
+      ],
+      // Burned from the deck with a full hand: never played.
+      [19, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'GRAVEYARD', SPELL_SCHOOL: '6' }],
       [16, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'SECRET', SPELL_SCHOOL: '5' }],
       [17, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'GRAVEYARD' }],
-      [18, { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'PLAY', SPELL_SCHOOL: '2' }],
+      [
+        18,
+        { CARDTYPE: 'SPELL', CONTROLLER: '1', ZONE: 'PLAY', SPELL_SCHOOL: '2', JUST_PLAYED: '1' },
+      ],
     ]);
     expect(counters(game, 2)).toEqual({
       boardAttack: 5,

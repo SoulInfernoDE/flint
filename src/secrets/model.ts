@@ -225,6 +225,13 @@ export class SecretsLog {
     }
   }
 
+  /** Whether a card is ruled out automatically for one secret (by a missed trigger). */
+  isRuledOut(secret: number, cardId: string): boolean {
+    const rule = ruleOf(cardId);
+    const passed = this.passed.get(secret);
+    return Boolean(rule && passed?.has(rule.needs ? `${rule.on}+${rule.needs}` : rule.on));
+  }
+
   /** The opponent's hidden secrets with their candidates. */
   slots(entities: Entities, opponent: string | undefined, all: CollectibleInfo[]): SecretSlot[] {
     if (!opponent) return [];

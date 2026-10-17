@@ -23,7 +23,7 @@ const lobby = entities([
       BACON_CURRENT_COMBAT_PLAYER_ID: '0',
     },
   ],
-  [6, null, { CARDTYPE: 'PLAYER', PLAYER_ID: '10' }],
+  [6, null, { CARDTYPE: 'PLAYER', PLAYER_ID: '10', BACON_CURRENT_COMBAT_PLAYER_ID: '0' }],
   [
     99,
     'BG23_HERO_305',
@@ -136,6 +136,30 @@ describe('battlegrounds model', () => {
     expect(me).toMatchObject({ cardId: 'BG23_HERO_305', health: 26, armor: 2, place: 6 });
     expect(state.heroes[0]).toMatchObject({ nextOpponent: true, inCombat: false });
     expect(state.heroes[2]).toMatchObject({ dead: true, triples: 1 });
+  });
+
+  it('takes the combat opponent from the other side, as the log has it', () => {
+    // In combat the user's player points at the user, the other side at the opponent.
+    const fighting = new Map(lobby);
+    const me = fighting.get(5)!;
+    const other = fighting.get(6)!;
+    fighting.set(5, { ...me, tags: { ...me.tags, BACON_CURRENT_COMBAT_PLAYER_ID: '2' } });
+    fighting.set(6, { ...other, tags: { ...other.tags, BACON_CURRENT_COMBAT_PLAYER_ID: '8' } });
+    const state = deriveState(fighting, 5, 6)!;
+    expect(state.combatOpponentPlayerId).toBe(8);
+    expect(state.heroes.filter((h) => h.inCombat).map((h) => h.playerId)).toEqual([8]);
+  });
+
+  it('knows when the user has not picked a hero yet', () => {
+    expect(deriveState(lobby, 5, 6)!.heroPicked).toBe(true);
+    // During the hero choice, players who picked already have a place, the user not yet.
+    const choosing = new Map(lobby);
+    const mine = choosing.get(99)!;
+    const { PLAYER_LEADERBOARD_PLACE: _, ...tags } = mine.tags;
+    choosing.set(99, { ...mine, tags });
+    const state = deriveState(choosing, 5, 6)!;
+    expect(state.heroPicked).toBe(false);
+    expect(state.heroes.some((h) => h.friendly)).toBe(false);
   });
 
   it('lists boards in position order', () => {

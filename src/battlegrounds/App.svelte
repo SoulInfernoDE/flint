@@ -59,7 +59,10 @@
     {/if}
 
     <h2>{t('bg-lobby')}</h2>
-    <ol class="lobby">
+    {#if !bg.heroPicked}
+      <p class="note">{t('bg-choosing-hero')}</p>
+    {/if}
+    <ol class="lobby" hidden={!bg.heroPicked}>
       {#each bg.heroes as hero (hero.playerId)}
         <li
           class="hero"

@@ -7,6 +7,7 @@ bg-tavern =
     }
 bg-gold = { $gold } / { $max } gold
 bg-lobby = Lobby
+bg-choosing-hero = Choosing heroes …
 bg-next = next
 bg-fighting = fighting
 bg-you = you

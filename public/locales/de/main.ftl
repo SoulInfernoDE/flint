@@ -108,4 +108,16 @@ opp-coin = Die Münze
 opp-created-card = Erschaffene Karte
 opp-created-by = Erschaffen von { $card }
 setting-show-opponent = Hand und gespielte Karten des Gegners anzeigen
+counter-attack-title = Angriff auf dem Brett (Diener und Held)
+counter-fatigue = Erschöpfung { $damage }
+counter-fatigue-title = Das Deck ist leer: Das nächste Ziehen verursacht so viel Erschöpfungsschaden
+counter-corpses = { $count ->
+        [one] 1 Leiche
+       *[other] { $count } Leichen
+    }
+counter-corpses-title = Leichen für Karten des Todesritters
+counter-spells = { $count ->
+        [one] 1 Zauber gespielt
+       *[other] { $count } Zauber gespielt
+    }
 setting-show-board = Eigenes Brett im Panel anzeigen

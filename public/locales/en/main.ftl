@@ -108,4 +108,16 @@ opp-coin = The Coin
 opp-created-card = Created card
 opp-created-by = Created by { $card }
 setting-show-opponent = Show the opponent's hand and played cards
+counter-attack-title = Attack on the board (minions and hero)
+counter-fatigue = Fatigue { $damage }
+counter-fatigue-title = The deck is empty: the next draw deals this much fatigue damage
+counter-corpses = { $count ->
+        [one] 1 corpse
+       *[other] { $count } corpses
+    }
+counter-corpses-title = Corpses for Death Knight cards
+counter-spells = { $count ->
+        [one] 1 spell played
+       *[other] { $count } spells played
+    }
 setting-show-board = Show your board in the panel

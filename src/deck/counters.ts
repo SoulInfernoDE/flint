@@ -37,7 +37,13 @@ export function counters(
     if (e.tags.CONTROLLER !== controller) continue;
     if (e.tags.ZONE === 'DECK') inDeck += 1;
     // Played spells: resolving (PLAY), done (GRAVEYARD), or secrets and quests (SECRET).
-    if (e.tags.CARDTYPE === 'SPELL' && PLAYED_SPELL_ZONES.has(e.tags.ZONE ?? '')) {
+    // JUST_PLAYED is set on playing and later reset to 0, never removed; burned or
+    // discarded spells never get it.
+    if (
+      e.tags.CARDTYPE === 'SPELL' &&
+      PLAYED_SPELL_ZONES.has(e.tags.ZONE ?? '') &&
+      (e.tags.JUST_PLAYED !== undefined || e.tags.ZONE === 'SECRET')
+    ) {
       const school = num(e.tags.SPELL_SCHOOL);
       if (school > 0) schools.add(school);
     }

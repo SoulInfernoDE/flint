@@ -89,6 +89,8 @@ REPLAY_ALL_EVENTS=1 cargo run --manifest-path overlay/Cargo.toml -p overlay-hear
 FLINT_GAME_EVENTS=events.json FLINT_CARDS=cards.json npx vitest run src/sim
 ```
 
+Für eine Partie mit Decks macht `src/sim/constructed.sim.test.ts` dasselbe für Deck-Tracker, Gegner-Tracker und Geheimnis-Helfer (mit `FLINT_COLLECTIBLE` auf `cards.collectible.json` sowie `FLINT_DECK_CODE` und `FLINT_FORMAT` aus der Partie).
+
 Echte Logs nennen andere Spieler; halte sie und ihre Ausgaben aus dem Repository heraus.
 
 ## Mitwirken

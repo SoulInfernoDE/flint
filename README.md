@@ -27,9 +27,15 @@ Battlegrounds panel in the game:
 - **Minions by tier:** a bar with the tavern tiers; click one to list the minions this lobby can offer, by tribe, with stats; filter by keyword (Battlecry, Deathrattle, Divine Shield …)
 - **Session recap:** games, average placement and top 4 finishes of the current session in the panel; the full history (hero, placement, tavern tier, tribes) on Flint's page in the overLay launcher, where you can also start a new session. A break of more than four hours starts one by itself
 
+Deck tracker in games with a deck (Ranked, Casual, practice and more):
+
+- **Your deck:** every card of the list with mana cost, rarity and the copies still in the deck; cards drawn are taken off, empty rows are greyed out
+- **Draw chance** of each card and the number of cards in the deck
+- With a loaner deck the list is unknown; the tracker then shows the cards drawn so far
+
 Everything follows the game as you see it: combat results appear when the combat is shown, not before.
 
-Planned: deck tracker, opponent tracker and Arena helpers.
+Planned: opponent tracker, deck statistics and Arena helpers.
 
 ## Privacy
 
@@ -37,8 +43,8 @@ Flint has no telemetry, no ads and no account. It only contacts the hosts declar
 
 | Host | Used for |
 |---|---|
-| `api.hearthstonejson.com` | Card names in your language (cached for 24 hours) |
-| `art.hearthstonejson.com` | Hero images |
+| `api.hearthstonejson.com` | Card names and data in your language (cached for 24 hours; collectible cards only once you play a game with a deck) |
+| `art.hearthstonejson.com` | Card and hero images |
 
 Your game history stays on your computer, in Flint's overLay storage.
 

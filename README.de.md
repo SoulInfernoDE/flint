@@ -27,9 +27,15 @@ Schlachtfeld-Panel im Spiel:
 - **Diener nach Stufe:** eine Leiste mit den Tavernenstufen; ein Klick zeigt die Diener, die diese Lobby anbieten kann, nach Volk und mit Werten; Filter nach Schlüsselwörtern (Kampfschrei, Todesröcheln, Gottesschild …)
 - **Sitzungsrückblick:** Partien, durchschnittliche Platzierung und Top-4-Ergebnisse der aktuellen Sitzung im Panel; der vollständige Verlauf (Held, Platzierung, Tavernenstufe, Völker) auf Flints Seite im overLay-Launcher, wo du auch eine neue Sitzung beginnen kannst. Eine Pause von mehr als vier Stunden beginnt von selbst eine neue
 
+Deck-Tracker in Partien mit Deck (Rangliste, Gelegenheitsspiel, Übung und mehr):
+
+- **Dein Deck:** jede Karte der Liste mit Manakosten, Seltenheit und den Exemplaren, die noch im Deck sind; gezogene Karten werden abgezogen, leere Zeilen ausgegraut
+- **Ziehchance** jeder Karte und die Zahl der Karten im Deck
+- Bei einem Leihdeck ist die Liste unbekannt; der Tracker zeigt dann die bisher gezogenen Karten
+
 Alles folgt dem Spiel so, wie du es siehst: Kampfergebnisse erscheinen, wenn der Kampf gezeigt wird, nicht vorher.
 
-Geplant: Deck-Tracker, Gegner-Tracker und Arena-Hilfen.
+Geplant: Gegner-Tracker, Deck-Statistiken und Arena-Hilfen.
 
 ## Datenschutz
 
@@ -37,8 +43,8 @@ Flint hat keine Telemetrie, keine Werbung und kein Konto. Es kontaktiert nur die
 
 | Host | Wofür |
 |---|---|
-| `api.hearthstonejson.com` | Kartennamen in deiner Sprache (24 Stunden zwischengespeichert) |
-| `art.hearthstonejson.com` | Heldenbilder |
+| `api.hearthstonejson.com` | Kartennamen und -daten in deiner Sprache (24 Stunden zwischengespeichert; sammelbare Karten erst, wenn du eine Partie mit Deck spielst) |
+| `art.hearthstonejson.com` | Karten- und Heldenbilder |
 
 Dein Spielverlauf bleibt auf deinem Rechner, im overLay-Speicher von Flint.
 

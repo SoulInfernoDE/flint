@@ -73,6 +73,8 @@ export interface RawCard {
   id: string;
   dbfId?: number;
   name?: string;
+  cost?: number;
+  rarity?: string;
   attack?: number;
   health?: number;
   mechanics?: string[];
@@ -146,6 +148,55 @@ export function compact(raw: RawCard[]): Compact[] {
 
 export function hsLocale(language: string): string {
   return LOCALES[language.split('-')[0] ?? 'en'] ?? 'enUS';
+}
+
+/** A collectible card as stored: dbf id, card id, name, mana cost, rarity, type. */
+export type Collectible = [
+  dbfId: number,
+  id: string,
+  name: string,
+  cost: number,
+  rarity: string,
+  type: string,
+];
+
+export interface CollectibleInfo {
+  dbfId: number;
+  id: string;
+  name: string;
+  cost: number;
+  rarity: string;
+  type: string;
+}
+
+export interface CollectibleDb {
+  byDbf: ReadonlyMap<number, CollectibleInfo>;
+  byId: ReadonlyMap<string, CollectibleInfo>;
+}
+
+/** Keeps what the deck tracker needs of the collectible card list. */
+export function compactCollectible(raw: RawCard[]): Collectible[] {
+  return (
+    raw
+      // Hero skins are collectible but never part of a deck.
+      .filter((c) => c.dbfId !== undefined && !(c.type === 'HERO' && c.set === 'HERO_SKINS'))
+      .map((c) => [c.dbfId!, c.id, c.name ?? c.id, c.cost ?? 0, c.rarity ?? '', c.type ?? ''])
+  );
+}
+
+export function toCollectibleMap(cards: Collectible[]): CollectibleDb {
+  const list = cards.map(([dbfId, id, name, cost, rarity, type]) => ({
+    dbfId,
+    id,
+    name,
+    cost,
+    rarity,
+    type,
+  }));
+  return {
+    byDbf: new Map(list.map((c) => [c.dbfId, c])),
+    byId: new Map(list.map((c) => [c.id, c])),
+  };
 }
 
 /** Small card art strip (also used for heroes). */

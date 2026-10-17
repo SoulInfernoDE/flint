@@ -2,7 +2,8 @@
 //
 // Where the data lives (checked against real games):
 // - the user's player entity: RESOURCES / RESOURCES_USED (gold), PLAYER_TECH_LEVEL
-//   (tavern tier), NEXT_OPPONENT_PLAYER_ID; its BACON_CURRENT_COMBAT_PLAYER_ID is the
+//   (tavern tier), BACON_MAX_PLAYER_TECH_LEVEL, NEXT_OPPONENT_PLAYER_ID; its
+//   BACON_CURRENT_COMBAT_PLAYER_ID is the
 //   user's own id during combat;
 // - the other side's player entity: BACON_CURRENT_COMBAT_PLAYER_ID is the opponent in
 //   the current combat (0 outside combat); the log names this entity after the opponent;
@@ -45,6 +46,8 @@ export interface BgMinion {
 export interface BgState {
   playerId: number;
   tier: number;
+  /** Highest tavern tier of this game. */
+  maxTier: number;
   gold: number;
   maxGold: number;
   nextOpponentPlayerId: number | null;
@@ -137,6 +140,7 @@ export function deriveState(
   return {
     playerId,
     tier: num(player, 'PLAYER_TECH_LEVEL'),
+    maxTier: num(player, 'BACON_MAX_PLAYER_TECH_LEVEL') || 6,
     gold: Math.max(
       0,
       num(player, 'RESOURCES') - num(player, 'RESOURCES_USED') + num(player, 'TEMP_RESOURCES'),

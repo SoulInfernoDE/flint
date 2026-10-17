@@ -1,15 +1,8 @@
 <script lang="ts">
   import { overlay } from '@overlay/sdk';
-  import type { FluentVariable } from '@fluent/bundle';
   import { tileUrl } from '../lib/cards';
   import type { BgMinion } from './model';
-  import { cardName, flint, lastBoards } from './store.svelte';
-
-  // Reading `flint.locale` makes texts re-render after a language switch.
-  function t(id: string, args?: Record<string, FluentVariable>): string {
-    void flint.locale;
-    return overlay.i18n.t(id, args);
-  }
+  import { cardName, flint, lastBoards, t } from './store.svelte';
 
   let panel: HTMLElement | undefined = $state();
   let header: HTMLElement | undefined = $state();
@@ -51,6 +44,22 @@
       <span class="tavern">{t('bg-tavern', { tier: bg.tier })}</span>
       <span class="gold">{t('bg-gold', { gold: bg.gold, max: bg.maxGold })}</span>
     </header>
+
+    {#if flint.tribes}
+      <div class="tribes" title={t('bg-tribes')}>
+        {#each flint.tribes.active as tribe (tribe)}
+          <span class="tribe">{t('bg-tribe', { tribe })}</span>
+        {/each}
+        {#if flint.tribes.unknown > 0}
+          <span class="tribe unknown"
+            >{t('bg-tribes-unknown', { count: flint.tribes.unknown })}</span
+          >
+        {/if}
+        {#each flint.tribes.banned as tribe (tribe)}
+          <span class="tribe banned" title={t('bg-tribe-banned')}>{t('bg-tribe', { tribe })}</span>
+        {/each}
+      </div>
+    {/if}
 
     {#if flint.cardsLoading}
       <p class="note">{t('bg-loading-cards')}</p>

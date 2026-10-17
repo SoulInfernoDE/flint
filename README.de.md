@@ -23,8 +23,12 @@ Schlachtfeld-Panel im Spiel:
 - **Zuletzt gesehenes Brett** eines Gegners, wenn du mit der Maus über seine Zeile fährst
 - **Dein Brett:** Diener mit Angriff/Leben und Stufe, goldene Diener markiert
 - **Tavernenstufe und Gold** (einschließlich Bonusgold)
+- **Völker der Lobby:** bestätigt anhand der Diener, die du siehst; sobald alle fünf bekannt sind, erscheinen auch die gesperrten
+- **Diener nach Stufe:** eine Leiste mit den Tavernenstufen; ein Klick zeigt die Diener, die diese Lobby anbieten kann, nach Volk und mit Werten
 
-Geplant: Völker der Lobby, Dienerliste nach Stufe, Sitzungsrückblick, danach Deck-Tracker, Gegner-Tracker und Arena-Hilfen.
+Alles folgt dem Spiel so, wie du es siehst: Kampfergebnisse erscheinen, wenn der Kampf gezeigt wird, nicht vorher.
+
+Geplant: Sitzungsrückblick, danach Deck-Tracker, Gegner-Tracker und Arena-Hilfen.
 
 ## Datenschutz
 

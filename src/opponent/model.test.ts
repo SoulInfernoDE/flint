@@ -70,6 +70,54 @@ describe('opponent tracker', () => {
     expect(deriveOpponent(game, 3, log)!.played).toHaveLength(1);
   });
 
+  it('marks cards enchanted in hand, by the card that did it', () => {
+    const enchanted: Entities = new Map([
+      ...game,
+      [30, { entity_id: 30, card_id: 'BOT_X', tags: { CARDTYPE: 'MINION', ZONE: 'PLAY' } }],
+      // A buff on hand card 11 from the visible card 30, one from a hidden card, and
+      // card 10's own enchantment.
+      [
+        40,
+        {
+          entity_id: 40,
+          card_id: 'E1',
+          tags: { CARDTYPE: 'ENCHANTMENT', ZONE: 'PLAY', ATTACHED: '11', CREATOR: '30' },
+        },
+      ],
+      [
+        41,
+        {
+          entity_id: 41,
+          card_id: 'E2',
+          tags: { CARDTYPE: 'ENCHANTMENT', ZONE: 'PLAY', ATTACHED: '11', CREATOR: '14' },
+        },
+      ],
+      [
+        42,
+        {
+          entity_id: 42,
+          card_id: 'E3',
+          tags: { CARDTYPE: 'ENCHANTMENT', ZONE: 'PLAY', ATTACHED: '10', CREATOR: '10' },
+        },
+      ],
+      // Gone: no longer counts.
+      [
+        43,
+        {
+          entity_id: 43,
+          card_id: 'E4',
+          tags: { CARDTYPE: 'ENCHANTMENT', ZONE: 'GRAVEYARD', ATTACHED: '10', CREATOR: '30' },
+        },
+      ],
+    ]);
+    const hand = deriveOpponent(enchanted, 3, new OpponentLog())!.hand;
+    expect(hand.map((c) => [c.entityId, c.enchantedBy])).toEqual([
+      [11, ['BOT_X', null]],
+      [10, []],
+      [13, []],
+    ]);
+  });
+
   it('starts over with a new game', () => {
     const log = new OpponentLog();
     log.apply(move(12, 'hand', 'play'));

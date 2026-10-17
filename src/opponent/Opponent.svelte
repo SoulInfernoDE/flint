@@ -40,6 +40,11 @@
     return cardId.startsWith('GAME_005') ? t('opp-coin') : t('opp-created-card');
   }
 
+  function enchantedTitle(card: HandCard): string {
+    const names = card.enchantedBy.map((id) => (id ? name(id) : t('opp-hidden-card')));
+    return t('opp-enchanted-by', { cards: names.join(', ') });
+  }
+
   function cost(cardId: string | null): string {
     const card = cardId ? flint.collectible?.byId.get(cardId) : undefined;
     return card ? String(card.cost) : '';
@@ -81,6 +86,11 @@
             <span class="name known">{name(card.cardId)}</span>
           {:else}
             <span class="name">{origin(card)}</span>
+          {/if}
+          {#if card.enchantedBy.length > 0}
+            <span class="enchanted" title={enchantedTitle(card)}
+              >✦{card.enchantedBy.length > 1 ? card.enchantedBy.length : ''}</span
+            >
           {/if}
           {#if card.createdBy}
             <span class="created" title={t('opp-created-by', { card: name(card.createdBy) })}

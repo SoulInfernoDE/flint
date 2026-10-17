@@ -2,6 +2,7 @@
   import { overlay } from '@overlay/sdk';
   import { tileUrl } from '../lib/cards';
   import { flint, t } from '../battlegrounds/store.svelte';
+  import CounterBar from '../deck/CounterBar.svelte';
   import type { HandCard } from './model';
 
   let panel: HTMLElement | null | undefined = $state();
@@ -124,5 +125,6 @@
         {/each}
       </ul>
     {/if}
+    <CounterBar counters={flint.counters.opposing} />
   </section>
 {/if}

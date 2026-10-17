@@ -33,6 +33,7 @@ Deck-Tracker in Partien mit Deck (Rangliste, Gelegenheitsspiel, Übung und mehr)
 - **Ziehchance** jeder Karte und die Zahl der Karten im Deck
 - Bei einem Leihdeck ist die Liste unbekannt; der Tracker zeigt dann die bisher gezogenen Karten
 - **Gegner:** seine Hand nach Platz, mit dem Zug, in dem jede Karte gezogen wurde, der Starthand, der Münze, bekannten Karten und auf der Hand veränderten Karten (Buffs, mit der verursachenden Karte); die Karten, die er gespielt hat, mit Zug; die Karten in seinem Deck
+- **Zähler** für beide Seiten: Angriff auf dem Brett, nächster Erschöpfungsschaden bei leerem Deck, Leichen beim Todesritter und gespielte Zauber
 
 Alles folgt dem Spiel so, wie du es siehst: Kampfergebnisse erscheinen, wenn der Kampf gezeigt wird, nicht vorher.
 

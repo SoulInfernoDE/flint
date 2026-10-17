@@ -2,6 +2,7 @@
 
 import type { FluentVariable } from '@fluent/bundle';
 import { overlay, type Hearthstone, type SettingValue } from '@overlay/sdk';
+import { counters, type Counters } from '../deck/counters';
 import { trackDeck, type DeckState } from '../deck/model';
 import { OpponentLog, deriveOpponent, type OpponentState } from '../opponent/model';
 import { loadCards, loadCollectible, type CardDb, type CollectibleDb } from '../lib/cards';
@@ -22,6 +23,8 @@ export const flint = $state<{
   deck: DeckState | null;
   /** The opponent's hand and played cards in a game with decks. */
   opponent: OpponentState | null;
+  /** Board attack, fatigue, corpses and spells of each side in a game with decks. */
+  counters: { friendly: Counters | null; opposing: Counters | null };
   /** Collectible cards; loaded the first time a game with a deck is seen. */
   collectible: CollectibleDb | null;
   cards: CardDb;
@@ -38,6 +41,7 @@ export const flint = $state<{
   history: { games: [], sessionStart: null },
   deck: null,
   opponent: null,
+  counters: { friendly: null, opposing: null },
   collectible: null,
   cards: new Map(),
   cardsError: null,
@@ -165,6 +169,10 @@ function updateDeckGame(info: Hearthstone.GameInfo): void {
   if (tracksOpponent) {
     flint.opponent = deriveOpponent(entities, info.opposing.player_entity_id, opponentLog);
   }
+  flint.counters = {
+    friendly: counters(entities, info.friendly.player_entity_id),
+    opposing: counters(entities, info.opposing.player_entity_id),
+  };
 }
 
 async function refreshCards(): Promise<void> {

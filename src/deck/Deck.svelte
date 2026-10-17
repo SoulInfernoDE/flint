@@ -2,6 +2,7 @@
   import { overlay } from '@overlay/sdk';
   import { tileUrl } from '../lib/cards';
   import { flint, t } from '../battlegrounds/store.svelte';
+  import CounterBar from './CounterBar.svelte';
 
   let panel: HTMLElement | null | undefined = $state();
   let header: HTMLElement | null | undefined = $state();
@@ -77,5 +78,6 @@
         </li>
       {/each}
     </ul>
+    <CounterBar counters={flint.counters.friendly} />
   </section>
 {/if}

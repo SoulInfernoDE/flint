@@ -7,20 +7,20 @@ const DUOS_ONLY = 3;
 
 // A small pool: one minion per tribe on tier 1, plus dual, all-tribe and neutral ones.
 const db = toMap([
-  ['B1', 'Beast', 'MINION', 1, ['BEAST'], 1, 1, POOL, 'B1_G'],
-  ['B1_G', 'Beast', 'MINION', 1, ['BEAST'], 2, 2, 0, null],
-  ['D1', 'Demon', 'MINION', 1, ['DEMON'], 1, 1, POOL, null],
-  ['R1', 'Dragon', 'MINION', 1, ['DRAGON'], 1, 1, POOL, null],
-  ['M1', 'Murloc', 'MINION', 1, ['MURLOC'], 1, 1, POOL, null],
-  ['P1', 'Pirate', 'MINION', 1, ['PIRATE'], 1, 1, POOL, null],
-  ['U1', 'Undead', 'MINION', 1, ['UNDEAD'], 1, 1, POOL, null],
-  ['X1', 'Dual', 'MINION', 1, ['PIRATE', 'UNDEAD'], 1, 1, POOL, null],
-  ['Y1', 'Dual kept', 'MINION', 1, ['DEMON', 'UNDEAD'], 1, 1, POOL, null],
-  ['A1', 'Amalgam', 'MINION', 1, ['ALL'], 1, 1, POOL, null],
-  ['N1', 'Neutral', 'MINION', 1, [], 1, 1, POOL, null],
-  ['N2', 'Duo neutral', 'MINION', 1, [], 1, 1, DUOS_ONLY, null],
-  ['T1', 'Token', 'MINION', 1, ['PIRATE'], 1, 1, 0, null],
-  ['B2', 'Beast two', 'MINION', 2, ['BEAST'], 2, 2, POOL, null],
+  ['B1', 'Beast', 'MINION', 1, ['BEAST'], 1, 1, POOL, 'B1_G', ['BATTLECRY']],
+  ['B1_G', 'Beast', 'MINION', 1, ['BEAST'], 2, 2, 0, null, []],
+  ['D1', 'Demon', 'MINION', 1, ['DEMON'], 1, 1, POOL, null, ['TAUNT', 'BATTLECRY']],
+  ['R1', 'Dragon', 'MINION', 1, ['DRAGON'], 1, 1, POOL, null, []],
+  ['M1', 'Murloc', 'MINION', 1, ['MURLOC'], 1, 1, POOL, null, []],
+  ['P1', 'Pirate', 'MINION', 1, ['PIRATE'], 1, 1, POOL, null, []],
+  ['U1', 'Undead', 'MINION', 1, ['UNDEAD'], 1, 1, POOL, null, []],
+  ['X1', 'Dual', 'MINION', 1, ['PIRATE', 'UNDEAD'], 1, 1, POOL, null, []],
+  ['Y1', 'Dual kept', 'MINION', 1, ['DEMON', 'UNDEAD'], 1, 1, POOL, null, []],
+  ['A1', 'Amalgam', 'MINION', 1, ['ALL'], 1, 1, POOL, null, []],
+  ['N1', 'Neutral', 'MINION', 1, [], 1, 1, POOL, null, ['DEATHRATTLE']],
+  ['N2', 'Duo neutral', 'MINION', 1, [], 1, 1, DUOS_ONLY, null, []],
+  ['T1', 'Token', 'MINION', 1, ['PIRATE'], 1, 1, 0, null, []],
+  ['B2', 'Beast two', 'MINION', 2, ['BEAST'], 2, 2, POOL, null, []],
 ] satisfies Compact[]);
 const all = poolTribes(db);
 
@@ -60,6 +60,12 @@ describe('minions by tier', () => {
       ['ALL', ['A1']],
       [null, ['N1']],
     ]);
+  });
+
+  it('filters by keyword', () => {
+    const groups = lobbyMinions(db, complete, 1, false, 'BATTLECRY');
+    expect(groups.flatMap((g) => g.minions.map((m) => m.cardId))).toEqual(['B1', 'D1']);
+    expect(lobbyMinions(db, complete, 1, false, 'WINDFURY')).toEqual([]);
   });
 
   it('adds Duos-only minions in Duos and keeps unknown tribes while incomplete', () => {

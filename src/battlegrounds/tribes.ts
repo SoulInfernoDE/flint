@@ -64,6 +64,7 @@ export interface PoolMinion {
   races: string[];
   attack: number;
   health: number;
+  mechanics: string[];
 }
 
 export interface TribeGroup {
@@ -75,13 +76,14 @@ export interface TribeGroup {
 /**
  * The pool minions of `tier` that this lobby can offer, grouped by tribe. Minions of a
  * banned tribe are left out (one of several tribes in the lobby is enough); Duos-only
- * minions only appear in Duos.
+ * minions only appear in Duos. With `mechanic`, only minions with that keyword.
  */
 export function lobbyMinions(
   db: CardDb,
   tribes: Tribes,
   tier: number,
   duos: boolean,
+  mechanic: string | null = null,
 ): TribeGroup[] {
   const banned = new Set(tribes.banned);
   const groups = new Map<string | null, PoolMinion[]>();
@@ -93,6 +95,7 @@ export function lobbyMinions(
     listed.add(card.id);
     const races = card.races;
     if (races.length > 0 && !races.includes(ALL) && races.every((r) => banned.has(r))) continue;
+    if (mechanic !== null && !card.mechanics.includes(mechanic)) continue;
     const key = races.includes(ALL) ? ALL : (races.find((r) => !banned.has(r)) ?? null);
     const list = groups.get(key) ?? [];
     list.push({
@@ -102,6 +105,7 @@ export function lobbyMinions(
       races,
       attack: card.attack ?? 0,
       health: card.health ?? 0,
+      mechanics: card.mechanics,
     });
     groups.set(key, list);
   }

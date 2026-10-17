@@ -2,7 +2,10 @@
 //
 // Where the data lives (checked against real games):
 // - the user's player entity: RESOURCES / RESOURCES_USED (gold), PLAYER_TECH_LEVEL
-//   (tavern tier), NEXT_OPPONENT_PLAYER_ID, BACON_CURRENT_COMBAT_PLAYER_ID;
+//   (tavern tier), NEXT_OPPONENT_PLAYER_ID; its BACON_CURRENT_COMBAT_PLAYER_ID is the
+//   user's own id during combat;
+// - the other side's player entity: BACON_CURRENT_COMBAT_PLAYER_ID is the opponent in
+//   the current combat (0 outside combat); the log names this entity after the opponent;
 // - one hero entity per lobby player with PLAYER_LEADERBOARD_PLACE, PLAYER_ID, HEALTH,
 //   DAMAGE, ARMOR, PLAYER_TECH_LEVEL and PLAYER_TRIPLES (heroes that were offered but not
 //   picked are in REMOVEDFROMGAME and ignored);
@@ -46,6 +49,9 @@ export interface BgState {
   maxGold: number;
   nextOpponentPlayerId: number | null;
   combatOpponentPlayerId: number | null;
+  /** False during the hero choice: players who picked already have a leaderboard place,
+   * the others not yet, so the lobby is incomplete until the user has picked too. */
+  heroPicked: boolean;
   heroes: BgHero[];
   board: BgMinion[];
   /** The other side's minions: the tavern while recruiting, the opponent in combat. */
@@ -95,7 +101,9 @@ export function deriveState(
   if (!player) return null;
   const playerId = num(player, 'PLAYER_ID');
   const nextOpponent = num(player, 'NEXT_OPPONENT_PLAYER_ID') || null;
-  const combatOpponent = num(player, 'BACON_CURRENT_COMBAT_PLAYER_ID') || null;
+  const other = otherPlayerEntityId == null ? undefined : entities.get(otherPlayerEntityId);
+  const combatId = num(other, 'BACON_CURRENT_COMBAT_PLAYER_ID');
+  const combatOpponent = combatId && combatId !== playerId ? combatId : null;
 
   // One hero per lobby player: the newest entity that has a leaderboard place.
   const byPlayer = new Map<number, Entity>();
@@ -126,7 +134,6 @@ export function deriveState(
     })
     .sort((a, b) => a.place - b.place);
 
-  const other = otherPlayerEntityId == null ? undefined : entities.get(otherPlayerEntityId);
   return {
     playerId,
     tier: num(player, 'PLAYER_TECH_LEVEL'),
@@ -137,6 +144,7 @@ export function deriveState(
     maxGold: num(player, 'RESOURCES'),
     nextOpponentPlayerId: nextOpponent,
     combatOpponentPlayerId: combatOpponent,
+    heroPicked: heroes.some((hero) => hero.friendly),
     heroes,
     board: boardOf(entities, playerId),
     otherBoard: other ? boardOf(entities, num(other, 'PLAYER_ID')) : [],

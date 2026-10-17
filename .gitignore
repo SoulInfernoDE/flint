@@ -6,3 +6,4 @@ dist/
 .DS_Store
 # Entity dumps of real games may contain player names.
 entities*.json
+events*.json

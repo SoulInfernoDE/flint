@@ -82,6 +82,15 @@ cargo run --manifest-path overlay/Cargo.toml -p overlay-hearthstone --example re
 FLINT_ENTITIES=entities.json npm test
 ```
 
+Um eine ganze Schlachtfeld-Partie Schritt für Schritt nachzuspielen, so wie das SDK Flint im Spiel versorgt, und dabei Lobby, Völker, gemerkte Bretter und die aufgezeichnete Platzierung zu prüfen (`cards.json` ist die Kartendatei von HearthstoneJSON):
+
+```bash
+REPLAY_ALL_EVENTS=1 cargo run --manifest-path overlay/Cargo.toml -p overlay-hearthstone --example replay -- /pfad/zu/Power.log - events.json
+FLINT_GAME_EVENTS=events.json FLINT_CARDS=cards.json npx vitest run src/sim
+```
+
+Echte Logs nennen andere Spieler; halte sie und ihre Ausgaben aus dem Repository heraus.
+
 ## Mitwirken
 
 Beiträge sind willkommen, siehe den [Leitfaden zum Mitwirken](https://github.com/SoulInfernoDE/overLay/blob/main/CONTRIBUTING.de.md) und den [Verhaltenskodex](https://github.com/SoulInfernoDE/overLay/blob/main/CODE_OF_CONDUCT.de.md) von overLay. Bitte arbeite clean-room: Beschreib das Verhalten von Firestone in eigenen Worten, aber kopiere nie Code oder Grafiken daraus.

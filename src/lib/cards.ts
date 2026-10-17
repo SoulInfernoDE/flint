@@ -21,7 +21,7 @@ import {
 export { hsLocale, tileUrl, type CardDb, type CardInfo, type CollectibleDb } from './card-data';
 
 /** Caches of earlier Flint versions, removed to free storage. */
-const OLD_CACHE_KEYS = ['cards-v1', 'cards-v2'];
+const OLD_CACHE_KEYS = ['cards-v1', 'cards-v2', 'cards-v3'];
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 interface Cached<T> {
@@ -60,7 +60,7 @@ async function cachedCards<T>(
 /** Battlegrounds cards (heroes, minions, shop cards). */
 export async function loadCards(language: string): Promise<CardDb> {
   for (const key of OLD_CACHE_KEYS) await overlay.storage.remove(key).catch(() => undefined);
-  return toMap(await cachedCards<Compact>('cards-v3', 'cards.json', language, compact));
+  return toMap(await cachedCards<Compact>('cards-v4', 'cards.json', language, compact));
 }
 
 /** Collectible cards, for decks. */

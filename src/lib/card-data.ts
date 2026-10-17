@@ -129,8 +129,8 @@ export function compact(raw: RawCard[]): Compact[] {
   const byDbf = new Map(raw.filter((c) => c.dbfId !== undefined).map((c) => [c.dbfId, c.id]));
   return (
     raw
-      // Enchantments are never shown; leaving them out keeps the stored list small.
-      .filter((c) => isBattlegroundsCard(c) && c.type !== 'ENCHANTMENT')
+      // Flint shows only minions and heroes; the rest would only fill the storage.
+      .filter((c) => isBattlegroundsCard(c) && (c.type === 'MINION' || c.type === 'HERO'))
       .map((c) => [
         c.id,
         c.name ?? c.id,

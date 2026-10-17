@@ -75,6 +75,7 @@ export interface RawCard {
   name?: string;
   cost?: number;
   rarity?: string;
+  cardClass?: string;
   attack?: number;
   health?: number;
   mechanics?: string[];
@@ -150,7 +151,10 @@ export function hsLocale(language: string): string {
   return LOCALES[language.split('-')[0] ?? 'en'] ?? 'enUS';
 }
 
-/** A collectible card as stored: dbf id, card id, name, mana cost, rarity, type. */
+/**
+ * A collectible card as stored: dbf id, card id, name, mana cost, rarity, type, and for
+ * secrets only their class and card set (kept small, as the list has thousands of cards).
+ */
 export type Collectible = [
   dbfId: number,
   id: string,
@@ -158,6 +162,7 @@ export type Collectible = [
   cost: number,
   rarity: string,
   type: string,
+  secret?: [cardClass: string, set: string],
 ];
 
 export interface CollectibleInfo {
@@ -167,6 +172,8 @@ export interface CollectibleInfo {
   cost: number;
   rarity: string;
   type: string;
+  /** Class and card set of a secret; null for other cards. */
+  secret: { cardClass: string; set: string } | null;
 }
 
 export interface CollectibleDb {
@@ -180,18 +187,30 @@ export function compactCollectible(raw: RawCard[]): Collectible[] {
     raw
       // Hero skins are collectible but never part of a deck.
       .filter((c) => c.dbfId !== undefined && !(c.type === 'HERO' && c.set === 'HERO_SKINS'))
-      .map((c) => [c.dbfId!, c.id, c.name ?? c.id, c.cost ?? 0, c.rarity ?? '', c.type ?? ''])
+      .map((c): Collectible => {
+        const card: Collectible = [
+          c.dbfId!,
+          c.id,
+          c.name ?? c.id,
+          c.cost ?? 0,
+          c.rarity ?? '',
+          c.type ?? '',
+        ];
+        if (c.mechanics?.includes('SECRET')) card.push([c.cardClass ?? '', c.set ?? '']);
+        return card;
+      })
   );
 }
 
 export function toCollectibleMap(cards: Collectible[]): CollectibleDb {
-  const list = cards.map(([dbfId, id, name, cost, rarity, type]) => ({
+  const list = cards.map(([dbfId, id, name, cost, rarity, type, secret]) => ({
     dbfId,
     id,
     name,
     cost,
     rarity,
     type,
+    secret: secret ? { cardClass: secret[0], set: secret[1] } : null,
   }));
   return {
     byDbf: new Map(list.map((c) => [c.dbfId, c])),

@@ -5,6 +5,7 @@ import { overlay, type Hearthstone, type SettingValue } from '@overlay/sdk';
 import { counters, type Counters } from '../deck/counters';
 import { trackDeck, type DeckState } from '../deck/model';
 import { OpponentLog, deriveOpponent, type OpponentState } from '../opponent/model';
+import { SecretsLog, candidates, type SecretSlot } from '../secrets/model';
 import { loadCards, loadCollectible, type CardDb, type CollectibleDb } from '../lib/cards';
 import { LastBoards, deriveState, isBattlegrounds, type BgState } from './model';
 import { addGame, recordGame, type History } from './history';
@@ -23,6 +24,8 @@ export const flint = $state<{
   deck: DeckState | null;
   /** The opponent's hand and played cards in a game with decks. */
   opponent: OpponentState | null;
+  /** The opponent's hidden secrets with what they may be. */
+  secrets: SecretSlot[];
   /** Board attack, fatigue, corpses and spells of each side in a game with decks. */
   counters: { friendly: Counters | null; opposing: Counters | null };
   /** Whose turn it is and when it began (local time); null until a turn starts live. */
@@ -43,6 +46,7 @@ export const flint = $state<{
   history: { games: [], sessionStart: null },
   deck: null,
   opponent: null,
+  secrets: [],
   counters: { friendly: null, opposing: null },
   turn: null,
   collectible: null,
@@ -148,6 +152,43 @@ function recompute(): void {
 let tracksDeck = false;
 let tracksOpponent = false;
 const opponentLog = new OpponentLog();
+const secretsLog = new SecretsLog();
+
+/** The PLAYER_ID of a player entity. */
+function playerId(entityId: number | null | undefined): string | undefined {
+  return entityId == null ? undefined : overlay.events.entities().get(entityId)?.tags.PLAYER_ID;
+}
+
+function applySecrets(event: Hearthstone.GameEvent): void {
+  const info = flint.info;
+  secretsLog.apply(
+    event,
+    overlay.events.entities(),
+    playerId(info?.friendly.player_entity_id),
+    playerId(info?.opposing.player_entity_id),
+  );
+}
+
+let secretCandidates: {
+  db: CollectibleDb;
+  key: string;
+  list: ReturnType<typeof candidates>;
+} | null = null;
+
+/** Possible secrets of a class in a format, kept until either changes. */
+function secretsOf(db: CollectibleDb, cardClass: string, format: string | null) {
+  const key = `${cardClass}/${format}`;
+  if (secretCandidates?.db !== db || secretCandidates.key !== key) {
+    secretCandidates = { db, key, list: candidates(db, cardClass, format) };
+  }
+  return secretCandidates.list;
+}
+
+/** Rules a possible secret out by hand, or back in. */
+export function toggleSecret(secret: number, cardId: string, ruledOut: boolean): void {
+  secretsLog.toggle(secret, cardId, ruledOut);
+  recompute();
+}
 let collectibleLoading = false;
 
 /** Deck and opponent in a game with decks; loads the collectible cards first. */
@@ -171,6 +212,15 @@ function updateDeckGame(info: Hearthstone.GameInfo): void {
   }
   if (tracksOpponent) {
     flint.opponent = deriveOpponent(entities, info.opposing.player_entity_id, opponentLog);
+    const opponentHero = info.opposing.hero?.entity_id;
+    const cardClass = opponentHero == null ? undefined : entities.get(opponentHero)?.tags.CLASS;
+    flint.secrets = cardClass
+      ? secretsLog.slots(
+          entities,
+          playerId(info.opposing.player_entity_id),
+          secretsOf(flint.collectible, cardClass, info.format),
+        )
+      : [];
   }
   flint.counters = {
     friendly: counters(entities, info.friendly.player_entity_id),
@@ -229,12 +279,18 @@ export async function start(
       flint.turn = { side: event.data.side, startedAt: Date.now() };
     }
     if (event.name === 'game-end' && options.record) recordEndedGame();
-    if (tracksOpponent) opponentLog.apply(event);
+    if (tracksOpponent) {
+      opponentLog.apply(event);
+      applySecrets(event);
+    }
   });
   // Catch up on the game so far (when this window starts in the middle of one); events
   // that also arrived live are applied again, which the log takes into account.
   if (tracksOpponent) {
-    for (const event of await overlay.events.history().catch(() => [])) opponentLog.apply(event);
+    for (const event of await overlay.events.history().catch(() => [])) {
+      opponentLog.apply(event);
+      applySecrets(event);
+    }
     recompute();
   }
   overlay.settings.onChange((settings) => (flint.settings = settings));

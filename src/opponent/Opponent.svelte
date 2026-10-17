@@ -1,7 +1,7 @@
 <script lang="ts">
   import { overlay } from '@overlay/sdk';
   import { tileUrl } from '../lib/cards';
-  import { flint, t } from '../battlegrounds/store.svelte';
+  import { flint, t, toggleSecret } from '../battlegrounds/store.svelte';
   import CounterBar from '../deck/CounterBar.svelte';
   import type { HandCard } from './model';
 
@@ -77,6 +77,27 @@
       <span class="title">{t('opp-title')}</span>
       <span class="left">{t('deck-in-deck', { count: opponent.deckCount })}</span>
     </header>
+
+    {#each flint.secrets as slot, index (slot.entityId)}
+      <h2>
+        {t('secret-title', { number: index + 1 })}{#if slot.turn !== null}
+          · {t('opp-turn', { turn: slot.turn })}{/if}
+      </h2>
+      <ul class="secrets">
+        {#each slot.candidates as option (option.card.id)}
+          <li class:out={option.ruledOut}>
+            <button
+              title={option.ruledOut ? t('secret-rule-in') : t('secret-rule-out')}
+              onclick={() => toggleSecret(slot.entityId, option.card.id, !option.ruledOut)}
+            >
+              <span class="cost">{option.card.cost}</span>
+              <span class="name">{option.card.name}</span>
+              {#if option.byHand}<span class="by-hand">✋</span>{/if}
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {/each}
 
     <h2>{t('opp-hand', { count: opponent.hand.length })}</h2>
     <ol class="hand">

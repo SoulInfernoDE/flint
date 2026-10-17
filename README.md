@@ -82,6 +82,15 @@ cargo run --manifest-path overlay/Cargo.toml -p overlay-hearthstone --example re
 FLINT_ENTITIES=entities.json npm test
 ```
 
+To replay a whole Battlegrounds game step by step, the way the SDK feeds Flint in the game, and check the lobby, tribes, remembered boards and the recorded placement along the way (`cards.json` is HearthstoneJSON's card file):
+
+```bash
+REPLAY_ALL_EVENTS=1 cargo run --manifest-path overlay/Cargo.toml -p overlay-hearthstone --example replay -- /path/to/Power.log - events.json
+FLINT_GAME_EVENTS=events.json FLINT_CARDS=cards.json npx vitest run src/sim
+```
+
+Real logs name other players, so keep them and their outputs out of the repository.
+
 ## Contributing
 
 Contributions are welcome, see overLay's [contributing guide](https://github.com/SoulInfernoDE/overLay/blob/main/CONTRIBUTING.md) and [code of conduct](https://github.com/SoulInfernoDE/overLay/blob/main/CODE_OF_CONDUCT.md). Please work clean-room: describe Firestone's behaviour in your own words, but never copy its code or assets.

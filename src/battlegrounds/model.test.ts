@@ -24,6 +24,8 @@ const lobby = entities([
     },
   ],
   [6, null, { CARDTYPE: 'PLAYER', PLAYER_ID: '10', BACON_CURRENT_COMBAT_PLAYER_ID: '0' }],
+  // Mid-game: the lobby is complete from the first turn on, whatever its size.
+  [1, null, { CARDTYPE: 'GAME', TURN: '9' }],
   [
     99,
     'BG23_HERO_305',
@@ -157,9 +159,24 @@ describe('battlegrounds model', () => {
     const mine = choosing.get(99)!;
     const { PLAYER_LEADERBOARD_PLACE: _, ...tags } = mine.tags;
     choosing.set(99, { ...mine, tags });
+    choosing.set(1, { entity_id: 1, card_id: null, tags: { CARDTYPE: 'GAME', TURN: '0' } });
     const state = deriveState(choosing, 5, 6)!;
     expect(state.heroPicked).toBe(false);
     expect(state.heroes.some((h) => h.friendly)).toBe(false);
+  });
+
+  it('keeps the user on their own hero, not the copy made when they are knocked out', () => {
+    const knockedOut = new Map(lobby);
+    const me = knockedOut.get(5)!;
+    knockedOut.set(5, { ...me, tags: { ...me.tags, HERO_ENTITY: '99' } });
+    // A newer copy of the user's hero with an outdated place.
+    knockedOut.set(900, {
+      entity_id: 900,
+      card_id: 'BG23_HERO_305',
+      tags: { CARDTYPE: 'HERO', ZONE: 'SETASIDE', PLAYER_ID: '2', PLAYER_LEADERBOARD_PLACE: '2' },
+    });
+    const mine = deriveState(knockedOut, 5, 6)!.heroes.find((h) => h.friendly)!;
+    expect(mine).toMatchObject({ entityId: 99, place: 6 });
   });
 
   it('lists boards in position order', () => {

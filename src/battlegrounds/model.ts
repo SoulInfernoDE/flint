@@ -53,7 +53,8 @@ export interface BgState {
   nextOpponentPlayerId: number | null;
   combatOpponentPlayerId: number | null;
   /** False during the hero choice: players who picked already have a leaderboard place,
-   * the others not yet, so the lobby is incomplete until the user has picked too. */
+   * the others not yet, so the lobby is incomplete until everyone has picked (or, in a
+   * smaller private lobby, until the first turn). */
   heroPicked: boolean;
   heroes: BgHero[];
   board: BgMinion[];
@@ -94,6 +95,16 @@ function boardOf(entities: Entities, controller: number): BgMinion[] {
     .map(minion);
 }
 
+/** Players in a Battlegrounds lobby. */
+const LOBBY_SIZE = 8;
+
+function gameTurn(entities: Entities): number {
+  for (const entity of entities.values()) {
+    if (entity.tags.CARDTYPE === 'GAME') return num(entity, 'TURN');
+  }
+  return 0;
+}
+
 /** The state for the user's player entity, or null if it is not known yet. */
 export function deriveState(
   entities: Entities,
@@ -117,6 +128,10 @@ export function deriveState(
     const known = byPlayer.get(id);
     if (!known || entity.entity_id > known.entity_id) byPlayer.set(id, entity);
   }
+  // The user's own hero is the player's HERO_ENTITY: when the user is knocked out, the
+  // game copies the hero (for their ghost), and the copy keeps an outdated place.
+  const ownHero = entities.get(num(player, 'HERO_ENTITY'));
+  if (ownHero?.tags.PLAYER_LEADERBOARD_PLACE) byPlayer.set(playerId, ownHero);
   const heroes = [...byPlayer.entries()]
     .map(([id, hero]): BgHero => {
       const health = num(hero, 'HEALTH') - num(hero, 'DAMAGE');
@@ -149,7 +164,9 @@ export function deriveState(
     maxGold: num(player, 'RESOURCES'),
     nextOpponentPlayerId: nextOpponent,
     combatOpponentPlayerId: combatOpponent,
-    heroPicked: heroes.some((hero) => hero.friendly),
+    heroPicked:
+      heroes.some((hero) => hero.friendly) &&
+      (heroes.length >= LOBBY_SIZE || gameTurn(entities) >= 1),
     heroes,
     board: boardOf(entities, playerId),
     otherBoard: other ? boardOf(entities, num(other, 'PLAYER_ID')) : [],

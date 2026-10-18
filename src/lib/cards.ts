@@ -21,7 +21,7 @@ import {
 export { hsLocale, tileUrl, type CardDb, type CardInfo, type CollectibleDb } from './card-data';
 
 /** Caches of earlier Flint versions, removed to free storage. */
-const OLD_CACHE_KEYS = ['cards-v1', 'cards-v2', 'cards-v3', 'collectible-v1'];
+const OLD_CACHE_KEYS = ['cards-v1', 'cards-v2', 'cards-v3', 'collectible-v1', 'collectible-v2'];
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 interface Cached<T> {
@@ -67,7 +67,7 @@ export async function loadCards(language: string): Promise<CardDb> {
 export async function loadCollectible(language: string): Promise<CollectibleDb> {
   return toCollectibleMap(
     await cachedCards<Collectible>(
-      'collectible-v2',
+      'collectible-v3',
       'cards.collectible.json',
       language,
       compactCollectible,

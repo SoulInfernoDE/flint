@@ -70,18 +70,22 @@ export function ruleOf(cardId: string): Rule | undefined {
   return RULES[baseId(cardId)];
 }
 
+/** Whether cards of a set can be in a game of a format (Wild and others: all). */
+export function inFormat(set: string, format: string | null): boolean {
+  return format === 'FT_STANDARD'
+    ? STANDARD_SETS.has(set)
+    : format === 'FT_CLASSIC'
+      ? set === 'VANILLA'
+      : true;
+}
+
 /** Possible secrets of a class in a format, one per name, by cost and name. */
 export function candidates(
   db: CollectibleDb,
   cardClass: string,
   format: string | null,
 ): CollectibleInfo[] {
-  const allowed = (set: string) =>
-    format === 'FT_STANDARD'
-      ? STANDARD_SETS.has(set)
-      : format === 'FT_CLASSIC'
-        ? set === 'VANILLA'
-        : true;
+  const allowed = (set: string) => inFormat(set, format);
   const byName = new Map<string, CollectibleInfo>();
   for (const card of db.byId.values()) {
     if (!card.secret || card.secret.cardClass !== cardClass || !allowed(card.secret.set)) continue;

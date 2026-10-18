@@ -4,9 +4,15 @@ import type { FluentVariable } from '@fluent/bundle';
 import { overlay, type Hearthstone, type SettingValue } from '@overlay/sdk';
 import { counters, type Counters } from '../deck/counters';
 import { trackDeck, type DeckState } from '../deck/model';
-import { OpponentLog, deriveOpponent, type OpponentState } from '../opponent/model';
+import {
+  OpponentLog,
+  deriveOpponent,
+  preparedCandidates,
+  type OpponentState,
+} from '../opponent/model';
 import { SecretsLog, candidates, type SecretSlot } from '../secrets/model';
 import { loadCards, loadCollectible, type CardDb, type CollectibleDb } from '../lib/cards';
+import type { CollectibleInfo } from '../lib/card-data';
 import { LastBoards, deriveState, isBattlegrounds, type BgState } from './model';
 import { addGame, recordGame, type History } from './history';
 import { inferTribes, poolTribes, seenMinions, type Tribes } from './tribes';
@@ -26,6 +32,8 @@ export const flint = $state<{
   opponent: OpponentState | null;
   /** The opponent's hidden secrets with what they may be. */
   secrets: SecretSlot[];
+  /** What each prepared hidden card in the opponent's hand may be, by entity id. */
+  prepared: Record<number, CollectibleInfo[]>;
   /** Board attack, fatigue, corpses and spells of each side in a game with decks. */
   counters: { friendly: Counters | null; opposing: Counters | null };
   /** Whose turn it is and when it began (local time); null until a turn starts live. */
@@ -47,6 +55,7 @@ export const flint = $state<{
   deck: null,
   opponent: null,
   secrets: [],
+  prepared: {},
   counters: { friendly: null, opposing: null },
   turn: null,
   collectible: null,
@@ -221,6 +230,18 @@ function updateDeckGame(info: Hearthstone.GameInfo): void {
           secretsOf(flint.collectible, cardClass, info.format),
         )
       : [];
+    const prepared: Record<number, CollectibleInfo[]> = {};
+    for (const card of flint.opponent?.hand ?? []) {
+      if (card.prepared && !card.cardId && cardClass) {
+        prepared[card.entityId] = preparedCandidates(
+          flint.collectible,
+          cardClass,
+          info.format,
+          card.prepared,
+        );
+      }
+    }
+    flint.prepared = prepared;
   }
   flint.counters = {
     friendly: counters(entities, info.friendly.player_entity_id),
@@ -280,7 +301,7 @@ export async function start(
     }
     if (event.name === 'game-end' && options.record) recordEndedGame();
     if (tracksOpponent) {
-      opponentLog.apply(event);
+      opponentLog.apply(event, overlay.events.entities());
       applySecrets(event);
     }
   });

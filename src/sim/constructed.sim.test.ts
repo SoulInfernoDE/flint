@@ -170,4 +170,113 @@ describe.skipIf(!eventsFile || !cardsFile)('a recorded game with decks, step by 
     );
     expect(problems).toEqual([]);
   });
+
+  // The user's own secrets are known, so with the roles swapped they show whether the
+  // rules hold: seen from the opponent, a secret of the user that never triggered must
+  // never be ruled out.
+  it('never rules out a secret that did not trigger, seen from the other side', () => {
+    const events = JSON.parse(readFileSync(eventsFile!, 'utf8')) as Hearthstone.ProviderMessage[];
+    const db = toCollectibleMap(
+      compactCollectible(JSON.parse(readFileSync(cardsFile!, 'utf8')) as RawCard[]),
+    );
+    const mirror = new Map<number, Entity>();
+    const secrets = new SecretsLog();
+    const problems: string[] = [];
+    const seen = new Map<number, string>();
+    let userPlayer: string | undefined;
+    let turn = 0;
+    let mostRuledOut = 0;
+    let candidateCount = 0;
+
+    // The opponent's view: the user's secrets are hidden.
+    const masked = () =>
+      new Map(
+        [...mirror].map(([id, e]) =>
+          e.tags.CONTROLLER === userPlayer && e.tags.ZONE === 'SECRET' && e.tags.SECRET === '1'
+            ? [id, { ...e, card_id: null }]
+            : [id, e],
+        ),
+      );
+
+    for (const event of events) {
+      if (event.name === 'entity-update') {
+        const { entity_id, card_id, tags } = event.data;
+        const entity = mirror.get(entity_id) ?? { entity_id, card_id: null, tags: {} };
+        if (card_id) entity.card_id = card_id;
+        Object.assign(entity.tags, tags);
+        mirror.set(entity_id, entity);
+        continue;
+      }
+      if (event.name === 'game-created') mirror.clear();
+      if (event.name === 'card-revealed' && event.data.side === 'friendly' && !userPlayer) {
+        userPlayer = mirror.get(event.data.entity_id)?.tags.CONTROLLER;
+      }
+      if (
+        event.name === 'zone-change' &&
+        event.data.from === 'deck' &&
+        event.data.card_id &&
+        !userPlayer
+      ) {
+        userPlayer = mirror.get(event.data.entity_id)?.tags.CONTROLLER;
+      }
+      const players = [...mirror.values()].filter((e) => e.tags.CARDTYPE === 'PLAYER');
+      const other = players.find((p) => p.tags.PLAYER_ID !== userPlayer)?.tags.PLAYER_ID;
+      const mine = players.find((p) => p.tags.PLAYER_ID === userPlayer);
+      if (!userPlayer || !other) {
+        secrets.apply(event, mirror, undefined, undefined);
+        continue;
+      }
+      // Turns are seen from the opponent.
+      const swapped: Hearthstone.GameEvent =
+        event.name === 'turn-start'
+          ? {
+              ...event,
+              data: {
+                ...event.data,
+                side: event.data.side === 'friendly' ? 'opposing' : 'friendly',
+              },
+            }
+          : event;
+      secrets.apply(swapped, masked(), other, userPlayer);
+      if (event.name === 'turn-start') turn = event.data.turn;
+
+      const active = [...mirror.values()].filter(
+        (e) =>
+          e.tags.CONTROLLER === userPlayer &&
+          e.tags.ZONE === 'SECRET' &&
+          e.tags.SECRET === '1' &&
+          e.card_id,
+      );
+      for (const e of active) {
+        seen.set(e.entity_id, e.card_id!);
+        if (secrets.isRuledOut(e.entity_id, e.card_id!)) {
+          problems.push(`turn ${turn}: ${e.card_id} ruled out while still waiting`);
+        }
+      }
+      const userClass = mine ? mirror.get(Number(mine.tags.HERO_ENTITY))?.tags.CLASS : undefined;
+      if (active.length > 0 && userClass && event.name === 'turn-start') {
+        const all = candidates(db, userClass, format);
+        candidateCount = all.length;
+        const slots = secrets.slots(masked(), userPlayer, all);
+        mostRuledOut = Math.max(
+          mostRuledOut,
+          ...slots.map((s) => s.candidates.filter((c) => c.ruledOut).length),
+        );
+      }
+    }
+
+    console.log(
+      JSON.stringify(
+        {
+          ownSecrets: [...seen.values()],
+          candidates: candidateCount,
+          mostRuledOutAtOnce: mostRuledOut,
+          problems: [...new Set(problems)].slice(0, 20),
+        },
+        null,
+        1,
+      ),
+    );
+    expect(problems).toEqual([]);
+  });
 });

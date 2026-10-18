@@ -89,7 +89,7 @@ REPLAY_ALL_EVENTS=1 cargo run --manifest-path overlay/Cargo.toml -p overlay-hear
 FLINT_GAME_EVENTS=events.json FLINT_CARDS=cards.json npx vitest run src/sim
 ```
 
-For a game with decks, `src/sim/constructed.sim.test.ts` does the same for the deck tracker, the opponent tracker and the secrets helper (with `FLINT_COLLECTIBLE` set to `cards.collectible.json`, and `FLINT_DECK_CODE` and `FLINT_FORMAT` from the game).
+For a game with decks, `src/sim/constructed.sim.test.ts` does the same for the deck tracker, the opponent tracker and the secrets helper (with `FLINT_COLLECTIBLE` set to `cards.collectible.json`, and `FLINT_DECK_CODE` and `FLINT_FORMAT` from the game). It also checks the secrets helper against your own secrets, which you know: seen from your opponent, none of them may be ruled out while it waits.
 
 Real logs name other players, so keep them and their outputs out of the repository.
 

@@ -152,8 +152,35 @@ export function hsLocale(language: string): string {
 }
 
 /**
+ * Collectible cards with the keyword Prepare. HearthstoneJSON has no mechanic for it yet
+ * (it is only in the card text, which is translated), so they are listed here; update
+ * with new card sets. Checked against the English card texts on 2026-10-18.
+ */
+export const PREPARE_CARDS = new Set([
+  'CATA_EVENT_400', // Commissary Crook
+  'CATA_EVENT_401', // Tunneling Geomancer
+  'JAIL_321', // Tricksy Improviser
+  'JAIL_326', // Judgment
+  'JAIL_395', // Sewer Swimmer
+  'JAIL_407', // Vanessa the Ringleader
+  'JAIL_435', // Rampaging Hound
+  'JAIL_444', // Sawbones
+  'JAIL_457', // Hijacked Securitybot
+  'JAIL_718', // Black Market Auctioneer
+  'JAIL_721', // Tras'tath, Soul Parasite
+  'JAIL_735', // Code Violet
+  'JAIL_890', // Captive Nathrezim
+  'JAIL_906', // Moragg
+  'JAIL_909', // Defias Wannabe
+  'JAIL_912', // Soothsayer
+  'JAIL_913', // Hold Them Off!
+  'JAIL_998', // Defias Smuggler
+]);
+
+/**
  * A collectible card as stored: dbf id, card id, name, mana cost, rarity, type, and for
- * secrets only their class and card set (kept small, as the list has thousands of cards).
+ * secrets and Prepare cards only their class and card set (kept small, as the list has
+ * thousands of cards).
  */
 export type Collectible = [
   dbfId: number,
@@ -162,7 +189,7 @@ export type Collectible = [
   cost: number,
   rarity: string,
   type: string,
-  secret?: [cardClass: string, set: string],
+  group?: [cardClass: string, set: string, kind?: 'prepare'],
 ];
 
 export interface CollectibleInfo {
@@ -174,6 +201,8 @@ export interface CollectibleInfo {
   type: string;
   /** Class and card set of a secret; null for other cards. */
   secret: { cardClass: string; set: string } | null;
+  /** Class and card set of a card with Prepare; null for other cards. */
+  prepare: { cardClass: string; set: string } | null;
 }
 
 export interface CollectibleDb {
@@ -197,21 +226,28 @@ export function compactCollectible(raw: RawCard[]): Collectible[] {
           c.type ?? '',
         ];
         if (c.mechanics?.includes('SECRET')) card.push([c.cardClass ?? '', c.set ?? '']);
+        else if (c.mechanics?.includes('PREPARE') || PREPARE_CARDS.has(c.id)) {
+          card.push([c.cardClass ?? '', c.set ?? '', 'prepare']);
+        }
         return card;
       })
   );
 }
 
 export function toCollectibleMap(cards: Collectible[]): CollectibleDb {
-  const list = cards.map(([dbfId, id, name, cost, rarity, type, secret]) => ({
-    dbfId,
-    id,
-    name,
-    cost,
-    rarity,
-    type,
-    secret: secret ? { cardClass: secret[0], set: secret[1] } : null,
-  }));
+  const list = cards.map(([dbfId, id, name, cost, rarity, type, group]) => {
+    const kept = group ? { cardClass: group[0], set: group[1] } : null;
+    return {
+      dbfId,
+      id,
+      name,
+      cost,
+      rarity,
+      type,
+      secret: group && !group[2] ? kept : null,
+      prepare: group?.[2] === 'prepare' ? kept : null,
+    };
+  });
   return {
     byDbf: new Map(list.map((c) => [c.dbfId, c])),
     byId: new Map(list.map((c) => [c.id, c])),

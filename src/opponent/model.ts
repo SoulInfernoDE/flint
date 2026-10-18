@@ -7,6 +7,8 @@
 
 import type { Hearthstone } from '@overlay/sdk';
 import type { Entities } from '../battlegrounds/model';
+import type { CollectibleDb, CollectibleInfo } from '../lib/card-data';
+import { inFormat } from '../secrets/model';
 
 /** How a card came into the hand. */
 export type HandSource = 'drawn' | 'created' | 'returned';
@@ -29,6 +31,24 @@ export interface HandCard {
    * stay hidden; that it was changed, and by what, is visible.
    */
   enchantedBy: (string | null)[];
+  /** Whether and when the card was prepared (keyword Prepare). */
+  prepared: PreparedCard | null;
+}
+
+/**
+ * A card prepared in hand: in its owner's next turn it costs `mana` + 1 less. The
+ * discount cannot go below a cost of 0, so a player who spends less than they have
+ * left shows that the card costs exactly `mana` + 1.
+ */
+export interface PreparedCard {
+  /** The owner's own turn in which the card is cheaper. */
+  turn: number;
+  /** The cost the card loses. */
+  discount: number;
+  /** That turn has not passed yet. */
+  active: boolean;
+  /** The card's cost, when the spent mana shows it; else null. */
+  exactCost: number | null;
 }
 
 export interface PlayedCard {
@@ -55,14 +75,21 @@ export class OpponentLog {
   private gameTurn = 0;
   private entered = new Map<number, { source: HandSource; turn: number; starting: boolean }>();
   private played: { entityId: number; turn: number }[] = [];
+  private prepares = new Map<number, { gameTurn: number; mana: number; capped: boolean }>();
 
   clear(): void {
     this.gameTurn = 0;
     this.entered.clear();
     this.played = [];
+    this.prepares.clear();
   }
 
-  apply(event: Hearthstone.GameEvent): void {
+  /**
+   * Takes one game event. `entities` is the mirror as of this event, when known (not
+   * for events from the history), to tell from the mana left whether a prepare was
+   * limited by the card's cost.
+   */
+  apply(event: Hearthstone.GameEvent, entities?: Entities): void {
     switch (event.name) {
       case 'game-created':
         this.clear();
@@ -93,7 +120,32 @@ export class OpponentLog {
         }
         break;
       }
+      case 'prepare': {
+        const { entity_id: id, mana } = event.data;
+        // The same event can come twice: from the history and live.
+        if (this.prepares.get(id)?.gameTurn === this.gameTurn) break;
+        this.prepares.set(id, {
+          gameTurn: this.gameTurn,
+          mana,
+          capped: entities ? manaLeft(entities, id, mana) : false,
+        });
+        break;
+      }
     }
+  }
+
+  /** Whether and when a card was prepared, as of now. */
+  prepared(id: number): PreparedCard | null {
+    const prepare = this.prepares.get(id);
+    if (!prepare) return null;
+    // The owner's next turn is two game turns later.
+    const discountTurn = prepare.gameTurn + 2;
+    return {
+      turn: ownTurn(discountTurn),
+      discount: prepare.mana + 1,
+      active: this.gameTurn <= discountTurn,
+      exactCost: prepare.capped ? prepare.mana + 1 : null,
+    };
   }
 
   enteredHand(id: number): { source: HandSource; turn: number; starting: boolean } | undefined {
@@ -103,6 +155,49 @@ export class OpponentLog {
   playedCards(): readonly { entityId: number; turn: number }[] {
     return this.played;
   }
+}
+
+/**
+ * Whether the owner of a card had mana left after preparing it. While the game shows
+ * the spent mana, the 1 mana of the prepare action itself is already counted as used
+ * and the rest is not yet.
+ */
+function manaLeft(entities: Entities, cardId: number, mana: number): boolean {
+  const controller = entities.get(cardId)?.tags.CONTROLLER;
+  const player = [...entities.values()].find(
+    (e) => e.tags.CARDTYPE === 'PLAYER' && e.tags.PLAYER_ID === controller,
+  );
+  if (!player) return false;
+  const tag = (name: string) => Number(player.tags[name] ?? 0);
+  const usedBefore = tag('RESOURCES_USED') - 1;
+  if (usedBefore < 0) return false;
+  const available = tag('RESOURCES') + tag('TEMP_RESOURCES') - tag('OVERLOAD_LOCKED') - usedBefore;
+  return mana < available;
+}
+
+/**
+ * The cards a prepared card can be: collectible cards with Prepare of the class (or
+ * neutral) in the format, at the cost it shows, by cost and name.
+ */
+export function preparedCandidates(
+  db: CollectibleDb,
+  cardClass: string,
+  format: string | null,
+  prepared: PreparedCard,
+): CollectibleInfo[] {
+  const byName = new Map<string, CollectibleInfo>();
+  for (const card of db.byId.values()) {
+    const prepare = card.prepare;
+    if (!prepare || (prepare.cardClass !== cardClass && prepare.cardClass !== 'NEUTRAL')) continue;
+    if (!inFormat(prepare.set, format)) continue;
+    // The discount is at most the card's cost.
+    const fits =
+      prepared.exactCost !== null
+        ? card.cost === prepared.exactCost
+        : card.cost >= prepared.discount;
+    if (fits && !byName.has(card.name)) byName.set(card.name, card);
+  }
+  return [...byName.values()].sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name));
 }
 
 export function deriveOpponent(
@@ -141,6 +236,7 @@ export function deriveOpponent(
         cardId: e.card_id,
         createdBy: creator?.card_id ?? null,
         enchantedBy: enchantments.get(e.entity_id) ?? [],
+        prepared: log.prepared(e.entity_id),
       };
     });
   const played = log

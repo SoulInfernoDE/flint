@@ -33,6 +33,7 @@ Deck tracker in games with a deck (Ranked, Casual, practice and more):
 - **Draw chance** of each card and the number of cards in the deck
 - With a loaner deck the list is unknown; the tracker then shows the cards drawn so far
 - **Opponent:** their hand by slot, with the turn each card was drawn, the starting hand, the Coin, known cards and cards changed in hand (buffs, with the card that did it); the cards they played with the turn; the cards left in their deck
+- **Prepared cards:** a card the opponent prepared shows its discount and the turn it is for; while it is hidden, the Prepare cards of their class it can be are listed, at the exact cost when the mana they spent shows it
 - **Secrets helper:** for each hidden secret of the opponent, the secrets of their class in the game's format; those that would have triggered on what you did (attacking the hero, casting a spell, playing a minion …) but did not are ruled out, and you can rule out more by click. The Standard card sets are kept in a list that is updated with each rotation
 - **Counters** for both sides: attack on the board, the next fatigue damage once the deck is empty, corpses for Death Knights, spells played and their spell schools, and a timer for the running turn
 

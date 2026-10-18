@@ -33,6 +33,7 @@ Deck-Tracker in Partien mit Deck (Rangliste, Gelegenheitsspiel, Übung und mehr)
 - **Ziehchance** jeder Karte und die Zahl der Karten im Deck
 - Bei einem Leihdeck ist die Liste unbekannt; der Tracker zeigt dann die bisher gezogenen Karten
 - **Gegner:** seine Hand nach Platz, mit dem Zug, in dem jede Karte gezogen wurde, der Starthand, der Münze, bekannten Karten und auf der Hand veränderten Karten (Buffs, mit der verursachenden Karte); die Karten, die er gespielt hat, mit Zug; die Karten in seinem Deck
+- **Vorbereitete Karten:** Eine Karte, die der Gegner vorbereitet hat, zeigt ihren Rabatt und den Zug, für den er gilt; solange sie verdeckt ist, stehen die Vorbereiten-Karten seiner Klasse darunter, die sie sein kann, mit genau den richtigen Kosten, wenn das verbrauchte Mana sie verrät
 - **Geheimnis-Helfer:** für jedes verdeckte Geheimnis des Gegners die Geheimnisse seiner Klasse im Format der Partie; die, die bei deinen Aktionen (Angriff auf den Helden, Zauber, Diener ausspielen …) ausgelöst hätten, aber nicht ausgelöst haben, werden ausgeschlossen, weitere per Klick. Die Standard-Erweiterungen stehen in einer Liste, die bei jeder Rotation aktualisiert wird
 - **Zähler** für beide Seiten: Angriff auf dem Brett, nächster Erschöpfungsschaden bei leerem Deck, Leichen beim Todesritter, gespielte Zauber und ihre Zauberschulen sowie ein Timer für den laufenden Zug
 

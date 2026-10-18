@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import type { Hearthstone } from '@overlay/sdk';
 import { describe, expect, it } from 'vitest';
 import type { Entities } from '../battlegrounds/model';
-import { OpponentLog, deriveOpponent, ownTurn } from './model';
+import { toCollectibleMap, type Collectible } from '../lib/card-data';
+import { OpponentLog, deriveOpponent, ownTurn, preparedCandidates } from './model';
 
 type Event = Hearthstone.GameEvent;
 
@@ -123,6 +124,90 @@ describe('opponent tracker', () => {
     log.apply(move(12, 'hand', 'play'));
     log.apply({ name: 'game-created' });
     expect(deriveOpponent(game, 3, log)!.played).toEqual([]);
+  });
+});
+
+describe('prepared cards', () => {
+  const prepare = (id: number, mana: number): Event => ({
+    name: 'prepare',
+    data: { entity_id: id, side: 'opposing', mana },
+  });
+  // The opponent (player 2) with 8 mana; as the game shows the spent mana, the prepare
+  // action's own 1 mana is counted as used.
+  const board = (used: number) =>
+    entities([
+      [
+        3,
+        null,
+        { CARDTYPE: 'PLAYER', PLAYER_ID: '2', RESOURCES: '8', RESOURCES_USED: String(used) },
+      ],
+      [10, null, { CONTROLLER: '2', ZONE: 'HAND', ZONE_POSITION: '1' }],
+    ]);
+
+  it('knows the discount and the turn it is for', () => {
+    const log = new OpponentLog();
+    log.apply(turn(6));
+    log.apply(prepare(10, 1), board(8));
+    expect(deriveOpponent(board(8), 3, log)!.hand[0]!.prepared).toEqual({
+      turn: 4,
+      discount: 2,
+      active: true,
+      exactCost: null,
+    });
+    log.apply(turn(8));
+    expect(log.prepared(10)?.active).toBe(true);
+    log.apply(turn(9));
+    expect(log.prepared(10)?.active).toBe(false);
+  });
+
+  it('knows the cost when mana was left', () => {
+    const log = new OpponentLog();
+    log.apply(turn(16));
+    log.apply(prepare(10, 6), board(1));
+    expect(log.prepared(10)?.exactCost).toBe(7);
+  });
+
+  it('does not guess the cost from the history', () => {
+    const log = new OpponentLog();
+    log.apply(turn(16));
+    log.apply(prepare(10, 6));
+    log.apply(prepare(10, 6), board(1));
+    expect(log.prepared(10)?.exactCost).toBeNull();
+  });
+
+  it('lists the Prepare cards it can be', () => {
+    const card = (
+      dbf: number,
+      id: string,
+      name: string,
+      cost: number,
+      cls: string,
+    ): Collectible => [
+      dbf,
+      id,
+      name,
+      cost,
+      'RARE',
+      'MINION',
+      [cls, 'ESCAPEFROM_VIOLET_HOLD', 'prepare'],
+    ];
+    const db = toCollectibleMap([
+      card(1, 'JAIL_912', 'Soothsayer', 7, 'PRIEST'),
+      card(2, 'JAIL_913', 'Hold Them Off!', 5, 'PRIEST'),
+      card(3, 'JAIL_407', 'Vanessa the Ringleader', 7, 'NEUTRAL'),
+      card(4, 'JAIL_998', 'Defias Smuggler', 3, 'NEUTRAL'),
+      card(5, 'JAIL_909', 'Defias Wannabe', 4, 'ROGUE'),
+      [6, 'CS2_029', 'Fireball', 4, 'FREE', 'SPELL'],
+    ]);
+    const names = (discount: number, exactCost: number | null) =>
+      preparedCandidates(db, 'PRIEST', 'FT_STANDARD', {
+        turn: 9,
+        discount,
+        active: true,
+        exactCost,
+      }).map((c) => c.name);
+    expect(names(4, null)).toEqual(['Hold Them Off!', 'Soothsayer', 'Vanessa the Ringleader']);
+    expect(names(7, 7)).toEqual(['Soothsayer', 'Vanessa the Ringleader']);
   });
 });
 

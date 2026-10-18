@@ -17,6 +17,7 @@ Alle nennenswerten Änderungen werden hier festgehalten. Das Format folgt [Keep 
 - Gegner-Tracker: die Hand des Gegners mit dem Zug, in dem jede Karte hinzukam (Starthand, Münze, erschaffene und zurückgekehrte Karten) und den auf der Hand veränderten Karten, die gespielten Karten nach Zug und seine Deckgröße; startet er mitten in einer Partie, holt er sie nach
 - Zähler unter Deck- und Gegner-Tracker: Angriff auf dem Brett, nächster Erschöpfungsschaden, Leichen (Todesritter), gespielte Zauber und ihre Zauberschulen sowie ein Zugtimer
 - Geheimnis-Helfer: mögliche Geheimnisse des Gegners nach Klasse und Format, bei den Standard-Geheimnissen automatisch ausgeschlossen, wenn ihr Auslöser ohne Reaktion verstrich, und von Hand
+- Vorbereitete Karten auf der Hand des Gegners: der Rabatt und sein Zug sowie die Vorbereiten-Karten, die die verdeckte Karte sein kann (die Vorbereiten-Karten stehen in einer Liste, weil die Kartendaten noch keine Mechanik dafür haben)
 - Kartennamen in der Sprache des Spiels und Heldenbilder von HearthstoneJSON, 24 Stunden im Mod-Speicher von overLay zwischengespeichert
 - Übersetzungen auf Englisch und Deutsch
 - Logos (CC BY-SA 4.0)

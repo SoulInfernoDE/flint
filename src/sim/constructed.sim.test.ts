@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest';
 import { compactCollectible, toCollectibleMap, type RawCard } from '../lib/card-data';
 import { counters } from '../deck/counters';
 import { trackDeck } from '../deck/model';
-import { OpponentLog, deriveOpponent } from '../opponent/model';
+import { OpponentLog, deriveOpponent, preparedCandidates } from '../opponent/model';
 import { SecretsLog, baseId, candidates } from '../secrets/model';
 
 const eventsFile = process.env.FLINT_GAME_EVENTS;
@@ -110,7 +110,7 @@ describe.skipIf(!eventsFile || !cardsFile)('a recorded game with decks, step by 
           if (out) problems.push(`turn ${turn}: the real secret ${cardId} had been ruled out`);
         }
       }
-      opponentLog.apply(event);
+      opponentLog.apply(event, mirror);
       secrets.apply(event, mirror, userPlayer, opponent);
       if (event.name === 'turn-start') {
         turn = event.data.turn;
@@ -141,12 +141,13 @@ describe.skipIf(!eventsFile || !cardsFile)('a recorded game with decks, step by 
       ? trackDeck(mirror, mine.entity_id, deckCode ? { name: 'deck', code: deckCode } : null, db)
       : null;
     const opponent = other ? deriveOpponent(mirror, other.entity_id, opponentLog) : null;
+    const opponentClass = other ? mirror.get(Number(other.tags.HERO_ENTITY))?.tags.CLASS : null;
     console.log(
       JSON.stringify(
         {
           turns: turn,
           userPlayer,
-          opponentClass: other ? mirror.get(Number(other.tags.HERO_ENTITY))?.tags.CLASS : null,
+          opponentClass,
           deck: deck && {
             listed: deck.listed,
             cardsAtStart: deckStart,
@@ -158,6 +159,15 @@ describe.skipIf(!eventsFile || !cardsFile)('a recorded game with decks, step by 
             handAtEnd: opponent.hand.length,
             played: opponent.played.length,
             handOrigins: opponent.hand.map((c) => c.source ?? 'unknown'),
+            prepared: opponent.hand
+              .filter((c) => c.prepared)
+              .map((c) => ({
+                slot: opponent.hand.indexOf(c) + 1,
+                ...c.prepared,
+                maybe: preparedCandidates(db, opponentClass ?? '', format, c.prepared!).map(
+                  (card) => card.name,
+                ),
+              })),
           },
           counters: mine && counters(mirror, mine.entity_id),
           secrets: { revealed: secretChecks, mostRuledOutAtOnce: ruledOutCount },

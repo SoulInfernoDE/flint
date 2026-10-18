@@ -46,6 +46,34 @@
     return t('opp-enchanted-by', { cards: names.join(', ') });
   }
 
+  /** Discovered by Wanted Poster, which gives any minion costing 5 or more Prepare. */
+  const WANTED_POSTER = 'CAP_407';
+
+  function preparedTitle(card: HandCard): string {
+    const prepared = card.prepared!;
+    const lines = [
+      prepared.active
+        ? t('opp-prepared', { discount: prepared.discount, turn: prepared.turn })
+        : t('opp-prepared-past', { turn: prepared.turn }),
+    ];
+    if (prepared.exactCost !== null)
+      lines.push(t('opp-prepared-exact', { cost: prepared.exactCost }));
+    return lines.join('\n');
+  }
+
+  /** What a prepared hidden card may be, while its discount is still to come. */
+  function preparedHint(card: HandCard): string | null {
+    if (!card.prepared?.active || card.cardId) return null;
+    if (card.createdBy === WANTED_POSTER) {
+      return t('opp-prepared-wanted', { card: name(WANTED_POSTER) });
+    }
+    const list = flint.prepared[card.entityId] ?? [];
+    if (list.length === 0) return null;
+    return t('opp-prepared-maybe', {
+      cards: list.map((c) => `${c.name} (${c.cost})`).join(', '),
+    });
+  }
+
   function cost(cardId: string | null): string {
     const card = cardId ? flint.collectible?.byId.get(cardId) : undefined;
     return card ? String(card.cost) : '';
@@ -118,6 +146,14 @@
             <span class="created" title={t('opp-created-by', { card: name(card.createdBy) })}
               >★</span
             >
+          {/if}
+          {#if card.prepared}
+            <span class="prepared" class:past={!card.prepared.active} title={preparedTitle(card)}
+              >−{card.prepared.discount}</span
+            >
+          {/if}
+          {#if preparedHint(card)}
+            <span class="maybe">{preparedHint(card)}</span>
           {/if}
         </li>
       {/each}

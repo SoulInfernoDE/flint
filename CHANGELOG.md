@@ -17,6 +17,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Opponent tracker: the opponent's hand with the turn each card came in (starting hand, the Coin, created and returned cards) and the cards changed in hand, the cards they played by turn, and their deck size; it catches up on the game when it starts in the middle of one
 - Counters below the deck and opponent trackers: attack on the board, next fatigue damage, corpses (Death Knight), spells played and their spell schools, and a turn timer
 - Secrets helper: possible secrets of the opponent by class and format, ruled out automatically for the Standard secrets when their trigger passed without a reaction, and by hand
+- Prepared cards in the opponent's hand: the discount and its turn, and the Prepare cards the hidden card can be (Prepare cards are kept in a list, as the card data has no mechanic for them yet)
 - Card names in the game's language and hero images from HearthstoneJSON, cached for 24 hours in overLay's mod storage
 - English and German translations
 - Logos (CC BY-SA 4.0)
